@@ -8,14 +8,14 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
-	"github.com/expectedsh/kcd/pkg/kcd"
+	"github.com/expectedsh/kcd"
 )
 
 func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	// kcd.Config.BindingHook = ...
+	// kcd.Config.BindHook = ...
 
 	r.Post("/{path}", kcd.Handler(CreateCustomer, http.StatusOK))
 

@@ -7,15 +7,12 @@ import (
 	"reflect"
 	"strconv"
 	"time"
-
-	"github.com/expectedsh/kcd/pkg/extractor"
-	"github.com/expectedsh/kcd/pkg/kcderr"
 )
 
 // bind binds the fields the fields of the input object in with
 // the values of the parameters extracted from the Gin context.
 // It reads tag to know what to extract using the extractor func.
-func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, extract extractor.Extractor) error {
+func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, extract Extractor) error {
 	t := v.Type()
 
 	if t.Kind() == reflect.Ptr {
@@ -55,18 +52,18 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 			continue
 		}
 
-		bindingError := &kcderr.Input{Field: tagValue, Type: t, Extractor: tag}
+		bindingError := &inputError{field: tagValue, fieldType: t, extractor: tag}
 
 		fieldValues, err := extract(w, r, tagValue)
 		if err != nil {
 			return bindingError.
-				WithErr(err).
-				WithMessage("unable to extract value from request")
+				withErr(err).
+				withMessage("unable to extract value from request")
 		}
 
 		// Extract default value and use it in place
 		// if no values were returned.
-		def, ok := ft.Tag.Lookup(Config.DefaultTag)
+		def, ok := ft.Tag.Lookup(defaultTag)
 		if ok && len(fieldValues) == 0 {
 			fieldValues = append(fieldValues, def)
 		}
@@ -89,14 +86,14 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 
 		// Multiple values can only be filled to types Slice and Array.
 		if len(fieldValues) > 1 && (kind != reflect.Slice && kind != reflect.Array) {
-			return bindingError.WithMessage("multiple values not supported")
+			return bindingError.withMessage("multiple values not supported")
 		}
 
 		// Ensure that the number of values to fill does not exceed the length of a field of type Array.
 		if kind == reflect.Array {
 			if field.Len() != len(fieldValues) {
 				msg := fmt.Sprintf("parameter expect %d values, got %d", field.Len(), len(fieldValues))
-				return bindingError.WithMessage(msg)
+				return bindingError.withMessage(msg)
 			}
 		}
 
@@ -111,8 +108,8 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 				err = bindStringValue(val, v)
 				if err != nil {
 					return bindingError.
-						WithErr(err).
-						WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
+						withErr(err).
+						withMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
 				}
 				if kind == reflect.Slice {
 					field.Set(reflect.Append(field, v))
@@ -128,8 +125,8 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 		err = bindStringValue(fieldValues[0], field)
 		if err != nil {
 			return bindingError.
-				WithErr(err).
-				WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", fieldValues[0], field.Type().Name()))
+				withErr(err).
+				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", fieldValues[0], field.Type().Name()))
 		}
 	}
 

@@ -21,7 +21,7 @@ const (
 //
 //  func([w http.ResponseWriter], [r *http.Request], [input object ptr]) ([output object], error)
 //
-// Input and output objects are both optional.
+// inputError and output objects are both optional.
 // As such, the minimal accepted signature is:
 //
 //  func(w http.ResponseWriter, r *http.Request) error
@@ -55,25 +55,25 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 			input = &i
 
 			// Bind body
-			if err := Config.BindingHook(w, r, input.Interface()); err != nil {
+			if err := Config.BindHook(w, r, input.Interface()); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
 
 			// Bind query-parameters.
-			if err := bind(w, r, i, Config.QueryTag, Config.QueryExtractor); err != nil {
+			if err := bind(w, r, i, queryTag, Config.QueryExtractor); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
 
 			// Bind path arguments.
-			if err := bind(w, r, i, Config.PathTag, Config.PathExtractor); err != nil {
+			if err := bind(w, r, i, pathTag, Config.PathExtractor); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
 
 			// Bind headers.
-			if err := bind(w, r, i, Config.HeaderTag, Config.HeaderExtractor); err != nil {
+			if err := bind(w, r, i, headerTag, Config.HeaderExtractor); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
