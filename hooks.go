@@ -43,6 +43,7 @@ func defaultRenderHook(w http.ResponseWriter, _ *http.Request, statusCode int, r
 			return outputError{Err: err}
 		}
 
+		w.Header().Set("Content-type", "application/json")
 		w.WriteHeader(statusCode)
 		if _, err := w.Write(marshal); err != nil {
 			return err
@@ -68,8 +69,11 @@ type errorResponse struct {
 // It check the error and return the corresponding response to the client.
 func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 
+	fmt.Println(err)
+
 	response := errorResponse{
 		ErrorDescription: "internal server error",
+		Error:            errors.KindInternal,
 		Fields:           map[string]string{},
 		Metadata:         map[string]interface{}{},
 	}
@@ -108,7 +112,8 @@ func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 			}
 		}
 
-	case inputError:
+	case *inputError:
+
 		w.WriteHeader(http.StatusBadRequest)
 		response.Error = errors.KindInvalidArgument
 
@@ -119,7 +124,7 @@ func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 		case jsonTag:
 			response.ErrorDescription = e.message
 		}
-	case outputError:
+	case *outputError:
 		w.WriteHeader(http.StatusInternalServerError)
 
 		response.Error = errors.KindInternal
@@ -133,6 +138,7 @@ func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 		return
 	}
 
+	w.Header().Set("Content-type", "application/json")
 	_, _ = w.Write(marshal)
 
 	return

@@ -136,7 +136,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 		))
 	}
 
-	orderedInputType = make([]inputType, 3)
+	orderedInputType = make([]inputType, 0)
 	setInputType := map[inputType]bool{}
 
 	for i := 0; i < n; i++ {
@@ -151,7 +151,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 			}
 
 			setInputType[inputTypeResponse] = true
-			orderedInputType[i] = inputTypeResponse
+			orderedInputType = append(orderedInputType, inputTypeResponse)
 		} else if currentInput.ConvertibleTo(reflect.TypeOf(&http.Request{})) {
 			if _, exist := setInputType[inputTypeRequest]; exist {
 				panic(fmt.Sprintf(
@@ -161,7 +161,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 			}
 
 			setInputType[inputTypeRequest] = true
-			orderedInputType[i] = inputTypeRequest
+			orderedInputType = append(orderedInputType, inputTypeRequest)
 		} else {
 			if _, exist := setInputType[inputTypeInput]; exist {
 				panic(fmt.Sprintf(
@@ -177,7 +177,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 				))
 			}
 			setInputType[inputTypeInput] = true
-			orderedInputType[i] = inputTypeInput
+			orderedInputType = append(orderedInputType, inputTypeInput)
 			reflectType = currentInput.Elem()
 		}
 	}
