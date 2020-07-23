@@ -34,6 +34,6 @@ func (c CreateCustomerInput) Validate() error {
 	)
 }
 
-func CreateCustomer(w http.ResponseWriter, r *http.Request, in *CreateCustomerInput) error {
-	return nil
+func CreateCustomer(in *CreateCustomerInput) (CreateCustomerInput, error) {
+	return *in, nil
 }

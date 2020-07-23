@@ -8,12 +8,57 @@ KCD is a grandiose http handler that manages un-marshall, validating, errors, ma
 
 It wraps your shiny handler in a http.HandlerFunc. 
 
+### Example
+
+*examples/simple/main.go:*
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	"github.com/expectedsh/kcd"
+)
+
+func main() {
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+
+	// kcd.Config.BindHook = ...
+
+	r.Post("/{path}", kcd.Handler(CreateCustomer, http.StatusOK))
+
+	_ = http.ListenAndServe(":3000", r)
+}
+
+type CreateCustomerInput struct {
+	Name   string   `json:"name"`
+	Emails []string `json:"emails"`
+}
+
+func (c CreateCustomerInput) Validate() error {
+	return validation.ValidateStruct(&c,
+		validation.Field(&c.Name, validation.Required, validation.Length(5, 20)),
+		validation.Field(&c.Emails, validation.Each(is.Email)),
+	)
+}
+
+func CreateCustomer(in *CreateCustomerInput) (CreateCustomerInput, error) {
+	return *in, nil
+}
+```
+
 #### Opinionated
 
 KCD use:
-- [github.com/go-chi/chi](github.com/go-chi/chi) for the router
-- [github.com/expectedsh/errors](github.com/expectedsh/errors) for the library errors
-- [github.com/go-ozzo/ozzo-validation](github.com/go-ozzo/ozzo-validation) for the validation of structs
+- [github.com/go-chi/chi](https://github.com/go-chi/chi) for the router
+- [github.com/expectedsh/errors](https://github.com/expectedsh/errors) for the library errors
+- [github.com/go-ozzo/ozzo-validation](https://github.com/go-ozzo/ozzo-validation) for the validation of structs
 
 #### Customizable
 
