@@ -200,18 +200,52 @@ func TestHeaderExtractor(t *testing.T) {
 	request := e.GET("/")
 
 	addHeader := func(r *httpexpect.Request, assertion extractorAssertion) {
-		switch reflect.TypeOf(assertion.value).Kind() {
-		case reflect.Slice:
+		if reflect.TypeOf(assertion.value).Kind() == reflect.Slice {
 			// !!!! Currently header does not support slice values
 			return
-		default:
-			r.WithHeader(assertion.rawKey, fmt.Sprintf("%v", assertion.value))
 		}
+		r.WithHeader(assertion.rawKey, fmt.Sprintf("%v", assertion.value))
 	}
 
 	for _, assertion := range testArray {
 		addHeader(request, assertion)
 	}
+
+	jsonExpect := request.Expect().JSON()
+
+	for _, assertion := range testArray {
+		if reflect.TypeOf(assertion.value).Kind() == reflect.Slice {
+			// !!!! Currently header does not support slice values
+			continue
+		}
+
+		jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+	}
+}
+
+func TestPathExtractor(t *testing.T) {
+
+	r := chi.NewRouter()
+
+	urlChi := ""
+	urlRequest := ""
+	for _, assertion := range testArray {
+		if reflect.TypeOf(assertion.value).Kind() == reflect.Slice {
+			// !!!! Currently header does not support slice values
+			return
+		}
+		urlChi += fmt.Sprintf("/{%s}", assertion.rawKey)
+		urlRequest += fmt.Sprintf("/{%v}", assertion.value)
+	}
+
+	r.Get(urlChi, Handler(extractorHandler, 200))
+
+	server := httptest.NewServer(r)
+	defer server.Close()
+
+	e := httpexpect.New(t, server.URL)
+
+	request := e.GET(urlRequest)
 
 	jsonExpect := request.Expect().JSON()
 
