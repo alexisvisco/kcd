@@ -4,9 +4,17 @@
 
 ### KCD ?
 
-KCD is a grandiose http handler that manages un-marshall, validating, errors, marshaling ... Opinionated by default but fully customizable.
+KCD is a grandiose REST helper that wrap your shiny handler into a http handler that manages un-marshall, validating, errors, marshaling ... 
 
-It wraps your shiny handler in a http.HandlerFunc. 
+**Opinionated by default but fully customizable.**
+
+### Features
+
+- Unmarshalling request structure with: body as JSON, query parameters, path parameters, header
+- Support default value for field in the request structure
+- Validating request structure with `go-ozzo/ozzo-validation` library
+- REST Error handling by using `expectedsh/errors` as the error library
+- Marshal response into a JSON
 
 ### Example
 
@@ -71,7 +79,7 @@ In this Config variable you have theses variables:
 | QueryExtractor | Used to retrieve query parameter, works with http stdlib |
 | PathExtractor | Used to retrieve path variable, chi is used|
 | HeaderExtractor | Used to retrieve header value, works with http stdlib |
-| ErrorHook | This is the way the REST app will manage error, by default it return JSON error, errors (from expected) is used|
+| ErrorHook | This is the way the REST app will manage error, by default it return JSON error, errors (from expected) is used |
 | RenderHook | Use json as response |
 | BindHook | Use json tag of request struct retrieved with the body of the request |
 | ValidateHook | Use ozzo-validation to validate request struct |
