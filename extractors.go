@@ -12,6 +12,10 @@ import (
 func defaultHeaderExtractor(_ http.ResponseWriter, r *http.Request, tag string) ([]string, error) {
 	header := r.Header.Get(tag)
 
+	if header == "" {
+		return nil, nil
+	}
+
 	return []string{header}, nil
 }
 
@@ -36,6 +40,9 @@ func defaultQueryExtractor(_ http.ResponseWriter, r *http.Request, tag string) (
 // parameters of a request.
 func defaultPathExtractor(_ http.ResponseWriter, r *http.Request, tag string) ([]string, error) {
 	p := chi.URLParam(r, tag)
+	if p == "" {
+		return nil, nil
+	}
 
 	return []string{p}, nil
 }

@@ -27,10 +27,11 @@ func (b *inputError) withErr(err error) *inputError {
 func (b inputError) Error() string {
 	if b.field != "" && b.fieldType != nil {
 		return fmt.Sprintf(
-			"binding error on field '%s' of type '%s': %s",
+			"binding error on field '%s' of type '%s': %s: %s",
 			b.field,
 			b.fieldType.Name(),
 			b.message,
+			b.err.Error(),
 		)
 	}
 	return fmt.Sprintf("binding error: %s", b.message)

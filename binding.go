@@ -47,6 +47,15 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 			continue
 		}
 
+		if field.Kind() == reflect.Struct {
+			err := bind(w, r, field, tag, extract)
+			if err != nil {
+				return err
+			}
+
+			continue
+		}
+
 		tagValue := ft.Tag.Get(tag)
 		if tagValue == "" {
 			continue
@@ -54,6 +63,7 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 
 		bindingError := &inputError{field: tagValue, fieldType: t, extractor: tag}
 
+		// todo: call all extractor here to not re-doing all things every time
 		fieldValues, err := extract(w, r, tagValue)
 		if err != nil {
 			return bindingError.
