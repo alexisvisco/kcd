@@ -7,9 +7,8 @@ on:
     branches: [ master, dev ]
 
 jobs:
-
-  build:
-    name: Build
+  tests:
+    name: KCD Tests
     runs-on: ubuntu-latest
     steps:
 
