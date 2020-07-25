@@ -17,13 +17,13 @@ func main() {
 
 	// kcd.Config.BindHook = ...
 
-	r.Post("/{path}", kcd.Handler(CreateCustomer, http.StatusOK))
+	r.Post("/{name}", kcd.Handler(CreateCustomer, http.StatusOK))
 
 	_ = http.ListenAndServe(":3000", r)
 }
 
 type CreateCustomerInput struct {
-	Name   string   `json:"name"`
+	Name   string   `json:"name" path:"name"`
 	Emails []string `json:"emails"`
 }
 
@@ -34,6 +34,12 @@ func (c CreateCustomerInput) Validate() error {
 	)
 }
 
-func CreateCustomer(in *CreateCustomerInput) (CreateCustomerInput, error) {
-	return *in, nil
+type Customer struct {
+	CreateCustomerInput
+}
+
+func CreateCustomer(in *CreateCustomerInput) (Customer, error) {
+	// do some stuff here
+
+	return Customer{*in}, nil
 }
