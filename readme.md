@@ -42,7 +42,6 @@ That's all. Well that's it, that's all you should have done if you didn't have K
 ## Benefits
 
 - More readable code
-- Testable code without using httptest in each of your tests
 - Focus on what it matters: business code
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
