@@ -75,6 +75,7 @@ type ExtractorTestStruct struct {
 	ArrFloat64 []float64 `query:"arr_float64" path:"arr_float64" header:"arr_float64"`
 
 	EmbeddedExtractorTest
+	*EmbeddedPtrExtractorTest
 	//embeddedQueryExtractor will don't work since it's not accessible
 
 	SubStruct SubStructExtractorTest
@@ -86,6 +87,10 @@ type ExtractorTestStruct struct {
 
 type EmbeddedExtractorTest struct {
 	StrE string `query:"str_embedded" path:"str_embedded" header:"str_embedded"`
+}
+
+type EmbeddedPtrExtractorTest struct {
+	StrEP string `query:"str_ptr_embedded" path:"str_ptr_embedded" header:"str_ptr_embedded"`
 }
 
 type SubStructExtractorTest struct {
@@ -149,6 +154,7 @@ var testArray = []extractorAssertion{
 	{"arr_float64", []float64{ValFloat64, ValFloat64}, "$.ArrFloat64"},
 
 	{"str_embedded", ValString, "$.StrE"},
+	{"str_ptr_embedded", ValString, "$.StrEP"},
 	{"sub_struct_str_s", ValString, "$.SubStruct.StrS"},
 }
 
@@ -183,7 +189,9 @@ func TestQueryExtractor(t *testing.T) {
 	jsonExpect := request.Expect().JSON()
 
 	for _, assertion := range testArray {
-		jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		t.Run(assertion.rawKey, func(t *testing.T) {
+			jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		})
 	}
 }
 
@@ -219,7 +227,9 @@ func TestHeaderExtractor(t *testing.T) {
 			continue
 		}
 
-		jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		t.Run(assertion.rawKey, func(t *testing.T) {
+			jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		})
 	}
 }
 
@@ -232,10 +242,10 @@ func TestPathExtractor(t *testing.T) {
 	for _, assertion := range testArray {
 		if reflect.TypeOf(assertion.value).Kind() == reflect.Slice {
 			// !!!! Currently header does not support slice values
-			return
+			continue
 		}
 		urlChi += fmt.Sprintf("/{%s}", assertion.rawKey)
-		urlRequest += fmt.Sprintf("/{%v}", assertion.value)
+		urlRequest += fmt.Sprintf("/%v", assertion.value)
 	}
 
 	r.Get(urlChi, Handler(extractorHandler, 200))
@@ -255,6 +265,8 @@ func TestPathExtractor(t *testing.T) {
 			continue
 		}
 
-		jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		t.Run(assertion.rawKey, func(t *testing.T) {
+			jsonExpect.Path(assertion.jsonPath).Equal(assertion.value)
+		})
 	}
 }
