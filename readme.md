@@ -4,6 +4,7 @@
 <p align="center">
 	<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg">
 	<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd">
+	<img src="https://codecov.io/gh/expectedsh/kcd/branch/master/graph/badge.svg" />
 </p>
 
 
