@@ -1,6 +1,10 @@
 <p align="center">
-  <img width="460" height="300" src="./.github/golang-ss.gif">
+	<img width="460" height="300" src="./.github/golang-ss.gif">
 </p>
+<p align="center">
+	<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg">
+</p>
+
 
 ### KCD ?
 
