@@ -48,7 +48,6 @@ func defaultRenderHook(w http.ResponseWriter, _ *http.Request, statusCode int, r
 		if _, err := w.Write(marshal); err != nil {
 			return err
 		}
-
 	} else {
 		w.WriteHeader(statusCode)
 	}
@@ -68,7 +67,6 @@ type errorResponse struct {
 // defaultErrorHook is the default error hook.
 // It check the error and return the corresponding response to the client.
 func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
-
 	fmt.Println("ERROR: ", err)
 
 	response := errorResponse{
@@ -140,8 +138,6 @@ func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 
 	w.Header().Set("Content-type", "application/json")
 	_, _ = w.Write(marshal)
-
-	return
 }
 
 // defaultBindHook returns a Bind hook with the default logic, with configurable MaxBodyBytes.

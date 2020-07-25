@@ -39,7 +39,7 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 	}
 	ht := hv.Type()
 
-	fundName := fmt.Sprintf("%s", runtime.FuncForPC(hv.Pointer()).Name())
+	fundName := runtime.FuncForPC(hv.Pointer()).Name()
 
 	orderInput, in := input(ht, fundName)
 	out := output(ht, fundName)
@@ -48,7 +48,6 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 
 	// Wrap http handler.
 	httpHandler := func(w http.ResponseWriter, r *http.Request) {
-
 		// kcd handler has custom input, handle binding.
 		if in != nil {
 			i := reflect.New(in)
@@ -142,7 +141,8 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 	for i := 0; i < n; i++ {
 		currentInput := ht.In(i)
 
-		if currentInput.Implements(interfaceResponseWriter) {
+		switch {
+		case currentInput.Implements(interfaceResponseWriter):
 			if _, exist := setInputType[inputTypeResponse]; exist {
 				panic(fmt.Sprintf(
 					"invalid parameter %d at handler %s: there is already a http.ResponseWriter parameter",
@@ -152,7 +152,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 
 			setInputType[inputTypeResponse] = true
 			orderedInputType = append(orderedInputType, inputTypeResponse)
-		} else if currentInput.ConvertibleTo(reflect.TypeOf(&http.Request{})) {
+		case currentInput.ConvertibleTo(reflect.TypeOf(&http.Request{})):
 			if _, exist := setInputType[inputTypeRequest]; exist {
 				panic(fmt.Sprintf(
 					"invalid parameter %d at handler %s: there is already a http.Request parameter",
@@ -162,7 +162,7 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 
 			setInputType[inputTypeRequest] = true
 			orderedInputType = append(orderedInputType, inputTypeRequest)
-		} else {
+		default:
 			if _, exist := setInputType[inputTypeInput]; exist {
 				panic(fmt.Sprintf(
 					"invalid parameter %d at handler %s: there is already the input parameter",

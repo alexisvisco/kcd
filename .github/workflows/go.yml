@@ -28,5 +28,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
+    - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.29
+
     - name: Test
       run: go test -v .

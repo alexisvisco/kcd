@@ -12,6 +12,9 @@ import (
 // bind binds the fields the fields of the input object in with
 // the values of the parameters extracted from the Gin context.
 // It reads tag to know what to extract using the extractor func.
+//
+// nolint because currently impossible to split into small functions
+// due to the number of arguments.
 func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, extract Extractor) error {
 	t := v.Type()
 

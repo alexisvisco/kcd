@@ -196,7 +196,6 @@ func TestQueryExtractor(t *testing.T) {
 }
 
 func TestHeaderExtractor(t *testing.T) {
-
 	r := chi.NewRouter()
 	r.Get("/", Handler(extractorHandler, 200))
 
@@ -234,7 +233,6 @@ func TestHeaderExtractor(t *testing.T) {
 }
 
 func TestPathExtractor(t *testing.T) {
-
 	r := chi.NewRouter()
 
 	urlChi := ""
