@@ -19,12 +19,12 @@ const (
 //
 // The handler may use the following signature:
 //
-//  func([w http.ResponseWriter], [r *http.Request], [input object ptr]) ([output object], error)
+//  func([response http.ResponseWriter], [request *http.Request], [input object ptr]) ([output object], error)
 //
 // inputError and output objects are both optional.
 // As such, the minimal accepted signature is:
 //
-//  func(w http.ResponseWriter, r *http.Request) error
+//  func(response http.ResponseWriter, request *http.Request) error
 //
 // The wrapped handler will bind the parameters from the query-string,
 // path, body and headers, and handle the errors.
@@ -50,8 +50,8 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 	httpHandler := func(w http.ResponseWriter, r *http.Request) {
 		// kcd handler has custom input, handle binding.
 		if in != nil {
-			i := reflect.New(in)
-			input = &i
+			inputStruct := reflect.New(in)
+			input = &inputStruct
 
 			// Bind body
 			if err := Config.BindHook(w, r, input.Interface()); err != nil {
@@ -59,25 +59,12 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 				return
 			}
 
-			// Bind query-parameters.
-			if err := bind(w, r, i, queryTag, Config.QueryExtractor); err != nil {
+			if err := newBinder(w, r, Config.Extractors).bind(inputStruct); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
 
-			// Bind path arguments.
-			if err := bind(w, r, i, pathTag, Config.PathExtractor); err != nil {
-				Config.ErrorHook(w, r, err)
-				return
-			}
-
-			// Bind headers.
-			if err := bind(w, r, i, headerTag, Config.HeaderExtractor); err != nil {
-				Config.ErrorHook(w, r, err)
-				return
-			}
-
-			if err := Config.ValidateHook(r.Context(), i.Interface()); err != nil {
+			if err := Config.ValidateHook(r.Context(), inputStruct.Interface()); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}

@@ -38,17 +38,13 @@ type BindHook func(w http.ResponseWriter, r *http.Request, in interface{}) error
 // ValidateHook is the hook called to validate the input.
 type ValidateHook func(ctx context.Context, input interface{}) error
 
-//
+// Extractor extract data from request/response with a tag value
 type Extractor func(w http.ResponseWriter, r *http.Request, tag string) ([]string, error)
 
-var DefaultExtractors = struct {
-	Query  Extractor
-	Path   Extractor
-	Header Extractor
-}{
-	Query:  defaultQueryExtractor,
-	Path:   defaultPathExtractor,
-	Header: defaultHeaderExtractor,
+var DefaultExtractors = map[string]Extractor{
+	queryTag:  defaultQueryExtractor,
+	pathTag:   defaultPathExtractor,
+	headerTag: defaultHeaderExtractor,
 }
 
 var DefaultHooks = struct {
@@ -64,18 +60,14 @@ var DefaultHooks = struct {
 }
 
 var Config = struct {
-	QueryExtractor  Extractor
-	PathExtractor   Extractor
-	HeaderExtractor Extractor
-	ErrorHook       ErrorHook
-	RenderHook      RenderHook
-	BindHook        BindHook
-	ValidateHook    ValidateHook
+	Extractors   map[string]Extractor
+	ErrorHook    ErrorHook
+	RenderHook   RenderHook
+	BindHook     BindHook
+	ValidateHook ValidateHook
 }{
 
-	QueryExtractor:  DefaultExtractors.Query,
-	PathExtractor:   DefaultExtractors.Header,
-	HeaderExtractor: DefaultExtractors.Path,
+	Extractors: DefaultExtractors,
 
 	ErrorHook:    DefaultHooks.Error,
 	RenderHook:   DefaultHooks.Render,

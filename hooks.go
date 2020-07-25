@@ -114,10 +114,10 @@ func defaultErrorHook(w http.ResponseWriter, r *http.Request, err error) {
 
 		w.WriteHeader(http.StatusBadRequest)
 		response.Error = errors.KindInvalidArgument
+		response.ErrorDescription = http.StatusText(http.StatusBadRequest)
 
 		switch e.extractor {
 		case queryTag, pathTag, headerTag:
-			response.ErrorDescription = http.StatusText(http.StatusBadRequest)
 			response.Fields[e.field] = e.message
 		case jsonTag:
 			response.ErrorDescription = e.message

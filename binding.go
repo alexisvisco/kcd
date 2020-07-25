@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
-// bind binds the fields the fields of the input object in with
-// the values of the parameters extracted from the Gin context.
-// It reads tag to know what to extract using the extractor func.
-//
-// nolint because currently impossible to split into small functions
-// due to the number of arguments.
-func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, extract Extractor) error {
+type binder struct {
+	response   http.ResponseWriter
+	request    *http.Request
+	extractors map[string]Extractor
+}
+
+func newBinder(response http.ResponseWriter, request *http.Request, extractors map[string]Extractor) *binder {
+	return &binder{response: response, request: request, extractors: extractors}
+}
+
+func (b *binder) bind(v reflect.Value) error {
 	t := v.Type()
 
 	if t.Kind() == reflect.Ptr {
@@ -24,123 +28,155 @@ func bind(w http.ResponseWriter, r *http.Request, v reflect.Value, tag string, e
 	}
 
 	for i := 0; i < t.NumField(); i++ {
-		ft := t.Field(i)
-		field := v.Field(i)
+		fieldType := t.Field(i)  // reflect.StructField
+		fieldValue := v.Field(i) // reflect.Value
 
-		// Handle embedded fields with a recursive call.
-		// If the field is a pointer, but is nil, we
-		// create a new value of the same type, or we
-		// take the existing memory address.
-		if ft.Anonymous {
-			if field.Kind() == reflect.Ptr {
-				if field.IsNil() {
-					field.Set(reflect.New(field.Type().Elem()))
-				}
-			} else {
-				if field.CanAddr() {
-					field = field.Addr()
-				}
+		if fieldType.Anonymous {
+			if err := b.handleEmbeddedField(fieldValue); err != nil {
+				return err
 			}
+			continue
+		}
 
-			err := bind(w, r, field, tag, extract)
+		if fieldValue.Kind() == reflect.Struct {
+			err := b.bind(fieldValue)
 			if err != nil {
 				return err
 			}
-
 			continue
 		}
 
-		if field.Kind() == reflect.Struct {
-			err := bind(w, r, field, tag, extract)
-			if err != nil {
-				return err
-			}
+		bindingError := &inputError{fieldType: t, field: t.Name()}
 
-			continue
-		}
-
-		tagValue := ft.Tag.Get(tag)
-		if tagValue == "" {
-			continue
-		}
-
-		bindingError := &inputError{field: tagValue, fieldType: t, extractor: tag}
-
-		// todo: call all extractor here to not re-doing all things every time
-		fieldValues, err := extract(w, r, tagValue)
+		values, err := b.extractValue(fieldType, bindingError)
 		if err != nil {
-			return bindingError.
-				withErr(err).
-				withMessage("unable to extract value from request")
+			return err
 		}
 
-		// Extract default value and use it in place
-		// if no values were returned.
-		def, ok := ft.Tag.Lookup(defaultTag)
-		if ok && len(fieldValues) == 0 {
-			fieldValues = append(fieldValues, def)
+		if len(values) == 0 {
+			defaultValue, ok := fieldType.Tag.Lookup(defaultTag)
+			if ok {
+				values = []string{defaultValue}
+			}
 		}
-		if len(fieldValues) == 0 {
+
+		if len(values) == 0 {
 			continue
 		}
 
-		// If the field is a nil pointer to a concrete type,
+		// If the fieldValue is a nil pointer to a concrete type,
 		// create a new addressable value for this type.
-		if field.Kind() == reflect.Ptr && field.IsNil() {
-			f := reflect.New(field.Type().Elem())
-			field.Set(f)
+		if fieldValue.Kind() == reflect.Ptr && fieldValue.IsNil() {
+			f := reflect.New(fieldValue.Type().Elem())
+			fieldValue.Set(f)
 		}
 
 		// Dereference pointer.
-		if field.Kind() == reflect.Ptr {
-			field = field.Elem()
+		if fieldValue.Kind() == reflect.Ptr {
+			fieldValue = fieldValue.Elem()
 		}
-		kind := field.Kind()
+		kind := fieldValue.Kind()
 
 		// Multiple values can only be filled to types Slice and Array.
-		if len(fieldValues) > 1 && (kind != reflect.Slice && kind != reflect.Array) {
+		if len(values) > 1 && (kind != reflect.Slice && kind != reflect.Array) {
 			return bindingError.withMessage("multiple values not supported")
 		}
 
-		// Ensure that the number of values to fill does not exceed the length of a field of type Array.
+		// Ensure that the number of values to fill does not exceed the length of a fieldValue of type Array.
 		if kind == reflect.Array {
-			if field.Len() != len(fieldValues) {
-				msg := fmt.Sprintf("parameter expect %d values, got %d", field.Len(), len(fieldValues))
+			if fieldValue.Len() != len(values) {
+				msg := fmt.Sprintf("parameter expect %d values, got %d", fieldValue.Len(), len(values))
 				return bindingError.withMessage(msg)
 			}
 		}
 
 		if kind == reflect.Slice || kind == reflect.Array {
-			// Create a new slice with an adequate
-			// length to set all the values.
-			if kind == reflect.Slice {
-				field.Set(reflect.MakeSlice(field.Type(), 0, len(fieldValues)))
-			}
-			for i, val := range fieldValues {
-				v := reflect.New(field.Type().Elem()).Elem()
-				err = bindStringValue(val, v)
-				if err != nil {
-					return bindingError.
-						withErr(err).
-						withMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
-				}
-				if kind == reflect.Slice {
-					field.Set(reflect.Append(field, v))
-				}
-				if kind == reflect.Array {
-					field.Index(i).Set(v)
-				}
+			if err := b.handleSliceAndArray(fieldValue, values, bindingError); err != nil {
+				return err
 			}
 			continue
 		}
 
-		// Fill string value into input field.
-		err = bindStringValue(fieldValues[0], field)
+		// Fill string value into input fieldValue.
+		err = bindStringValue(values[0], fieldValue)
 		if err != nil {
 			return bindingError.
 				withErr(err).
-				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", fieldValues[0], field.Type().Name()))
+				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", values[0], fieldValue.Type().Name()))
 		}
+	}
+
+	return nil
+}
+
+func (b *binder) extractValue(fieldType reflect.StructField, bindingError *inputError) ([]string, error) {
+	for tag, extractor := range b.extractors {
+		tagValue := fieldType.Tag.Get(tag)
+		if tagValue == "" {
+			continue
+		}
+
+		bindingError.field = tagValue
+		bindingError.extractor = tag
+
+		values, err := extractor(b.response, b.request, tagValue)
+
+		if err != nil {
+			return nil, bindingError.
+				withErr(err).
+				withMessage("unable to extract value from request")
+		}
+
+		if len(values) > 0 {
+			return values, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (b *binder) handleSliceAndArray(field reflect.Value, values []string, bindingError *inputError) (err error) {
+	kind := field.Kind()
+	// Create a new slice with an adequate
+	// length to set all the values.
+	if kind == reflect.Slice {
+		field.Set(reflect.MakeSlice(field.Type(), 0, len(values)))
+	}
+	for i, val := range values {
+		v := reflect.New(field.Type().Elem()).Elem()
+		err = bindStringValue(val, v)
+		if err != nil {
+			return bindingError.
+				withErr(err).
+				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
+		}
+		if kind == reflect.Slice {
+			field.Set(reflect.Append(field, v))
+		}
+		if kind == reflect.Array {
+			field.Index(i).Set(v)
+		}
+	}
+	return nil
+}
+
+// handleEmbeddedField embedded fields with a call to bind.
+// If the field is a pointer, but is nil, we create a new value of the same type, or we
+// take the existing memory address.
+func (b *binder) handleEmbeddedField(field reflect.Value) (err error) {
+	if field.Kind() == reflect.Ptr {
+		if field.IsNil() {
+			field.Set(reflect.New(field.Type().Elem()))
+		}
+	} else {
+		if field.CanAddr() {
+			field = field.Addr()
+		}
+	}
+
+	err = b.bind(field)
+	if err != nil {
+		return err
 	}
 
 	return nil
