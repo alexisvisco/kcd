@@ -9,13 +9,13 @@
 
 ------
 
-## :stars2: KCD 
+## :stars: KCD 
 
 KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. It manage all you want for building REST services.
 
 This library is **opinionated** by default but **fully customizable** which mean it uses some other libraries like Chi for instance. KCD is modular so each pieces of the code that rely on a specific library can be changed. 
 
-## What KCD does exactly 
+## :rocket: What KCD does exactly 
 
 Okay so KCD will wrap your cool handler into a http handler. The magic happen with this function:
 
@@ -28,14 +28,14 @@ func([response http.ResponseWriter], [request *http.Request], [input object ptr]
  
 The only parameter in your shiny handler that is required is the returned error. 
 
-**If there are any errors at some point KCD will call the [error hook](hooks.go#L69) to provide a REST generic error**.
+**If there are any errors at some point KCD will call the [error hook](pkg/hook/error.go) to provide a REST generic error**.
 
 1. If there is a custom input parameter (a pointer to a structure) it will:
-    1. Run all [extractors](extractors.go) to extract values from the request into the input (query parameters, path, header, default value ...)
-    2. Run the JSON body [bind hook](hooks.go#L144)
-    3. Validate the input through the [vaidate hook](hooks.go#L18)
+    1. Run all [extractors](pkg/extractor) to extract values from the request into the input (query parameters, path, header, default value ...)
+    2. Run the JSON body [bind hook](pkg/hook/bind.go)
+    3. Validate the input through the [validate hook](pkg/hook/validate.go)
 3. If all is good it will then call your shiny handler with all required arguments
-4. Then if there is an output parameter it will call the [render hook](hooks.go#L39)
+4. Then if there is an output parameter it will call the [render hook](pkg/hook/render.go)
 
 That's all. Well that's it, that's all you should have done if you didn't have KCD. 
 
