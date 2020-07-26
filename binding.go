@@ -112,7 +112,7 @@ func (b *binder) bind(v reflect.Value) error {
 		if err != nil {
 			return bindingError.
 				WithErr(err).
-				WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", values[0], fieldValue.Type().Name()))
+				WithMessage("invalid syntax")
 		}
 	}
 
@@ -160,7 +160,7 @@ func (b *binder) handleSliceAndArray(field reflect.Value, values []string,
 		if err != nil {
 			return bindingError.
 				WithErr(err).
-				WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
+				WithMessage("invalid syntax")
 		}
 		if kind == reflect.Slice {
 			field.Set(reflect.Append(field, v))

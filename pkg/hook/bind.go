@@ -12,18 +12,18 @@ import (
 // the input interface with the json encoding of the stdlib.
 func Bind(maxBodyBytes int64) BindHook {
 	return func(w http.ResponseWriter, r *http.Request, in interface{}) error {
-		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 		if r.ContentLength == 0 {
 			return nil
 		}
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
 		bytesBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			return kcderr.InputError{Extractor: "json", Message: "unable to read body"}
+			return &kcderr.InputError{Extractor: "json", Message: "unable to read body"}
 		}
 
 		if err := json.Unmarshal(bytesBody, in); err != nil {
-			return kcderr.InputError{Extractor: "json", Message: "unable to unmarshal request"}
+			return &kcderr.InputError{Extractor: "json", Message: "unable to unmarshal request"}
 		}
 
 		return nil

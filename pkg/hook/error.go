@@ -33,6 +33,8 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 		Metadata:         map[string]interface{}{},
 	}
 
+	w.Header().Set("Content-type", "application/json")
+
 	reqID := middleware.GetReqID(r.Context())
 	if reqID != "" {
 		response.Metadata["request_id"] = reqID
@@ -53,7 +55,6 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 		response.ErrorDescription = e.Message
 		response.Error = e.Kind
 	case *kcderr.InputError:
-
 		w.WriteHeader(http.StatusBadRequest)
 		response.Error = errors.KindInvalidArgument
 		response.ErrorDescription = http.StatusText(http.StatusBadRequest)
@@ -69,6 +70,10 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 
 		response.Error = errors.KindInternal
 		response.ErrorDescription = e.Error()
+	default:
+		w.WriteHeader(http.StatusInternalServerError)
+		response.Error = errors.KindInternal
+		// todo: log the error
 	}
 
 	// todo: use a log hook to log kcd real (critic) error
@@ -78,6 +83,5 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 		return
 	}
 
-	w.Header().Set("Content-type", "application/json")
 	_, _ = w.Write(marshal)
 }
