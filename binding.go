@@ -21,7 +21,6 @@ type binder struct {
 
 func newBinder(response http.ResponseWriter, request *http.Request,
 	stringsExtractors []extractor.Strings, valueExtractors []extractor.Value) *binder {
-
 	return &binder{
 		response:          response,
 		request:           request,
@@ -147,7 +146,8 @@ func (b *binder) extractValue(fieldType reflect.StructField, bindingError *kcder
 	return nil, nil
 }
 
-func (b *binder) handleSliceAndArray(field reflect.Value, values []string, bindingError *kcderr.InputError) (err error) {
+func (b *binder) handleSliceAndArray(field reflect.Value, values []string,
+	bindingError *kcderr.InputError) (err error) {
 	kind := field.Kind()
 	// Create a new slice with an adequate
 	// length to set all the values.
