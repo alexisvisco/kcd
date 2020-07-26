@@ -2,9 +2,9 @@
 	<img width="460" height="300" src="./.github/golang-ss.gif">
 </p>
 <p align="center">
-	<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg">
-	<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd">
-	<img src="https://codecov.io/gh/expectedsh/kcd/branch/master/graph/badge.svg" />
+	<img href="https://github.com/expectedsh/kcd/actions" width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg">
+	<img href="https://goreportcard.com/report/github.com/expectedsh/kcd" width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd">
+	<img href="https://codecov.io/gh/expectedsh/kcd" src="https://codecov.io/gh/expectedsh/kcd/branch/master/graph/badge.svg" />
 </p>
 
 ------
