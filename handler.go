@@ -44,7 +44,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	orderInput, in := input(ht, fundName)
 	out := output(ht, fundName)
 
-	var input *reflect.Value = nil
+	var input *reflect.Value
 
 	// Wrap http handler.
 	httpHandler := func(w http.ResponseWriter, r *http.Request) {

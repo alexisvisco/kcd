@@ -5,6 +5,7 @@ import (
 	"github.com/expectedsh/kcd/pkg/hook"
 )
 
+// Configuration is the main configuration type of kcd
 type Configuration struct {
 	StringsExtractors []extractor.Strings
 	ValueExtractors   []extractor.Value
@@ -15,6 +16,9 @@ type Configuration struct {
 	RenderHook   hook.RenderHook
 }
 
+// Config is the instance of Configuration type.
+// You can add as many extractor you want, modify them ...
+// You can set your custom hook too.
 var Config = Configuration{
 	StringsExtractors: []extractor.Strings{extractor.Path{}, extractor.Header{}, extractor.Query{}},
 	ValueExtractors:   []extractor.Value{extractor.Context{}},
