@@ -15,7 +15,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	// kcd.Config.BindHook = ...
+	// kcd.Configuration.BindHook = ...
 
 	r.Post("/{name}", kcd.Handler(CreateCustomer, http.StatusOK))
 

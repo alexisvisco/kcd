@@ -9,7 +9,7 @@
 
 ------
 
-## KCD 
+## :stars2: KCD 
 
 KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. It manage all you want for building REST services.
 
@@ -39,14 +39,14 @@ The only parameter in your shiny handler that is required is the returned error.
 
 That's all. Well that's it, that's all you should have done if you didn't have KCD. 
 
-## Benefits
+## :coffee: Benefits
 
 - More readable code
 - Focus on what it matters: business code
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
 
-## Example
+## :muscle: Example
 
 - [*examples/simple/main.go*](./examples/simple/main.go)
 

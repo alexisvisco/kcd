@@ -7,16 +7,27 @@ import (
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/expectedsh/kcd/internal/kcderr"
+	"github.com/expectedsh/kcd/pkg/extractor"
 )
 
 type binder struct {
-	response   http.ResponseWriter
-	request    *http.Request
-	extractors map[string]Extractor
+	response          http.ResponseWriter
+	request           *http.Request
+	stringsExtractors []extractor.Strings
+	valueExtractors   []extractor.Value
 }
 
-func newBinder(response http.ResponseWriter, request *http.Request, extractors map[string]Extractor) *binder {
-	return &binder{response: response, request: request, extractors: extractors}
+func newBinder(response http.ResponseWriter, request *http.Request,
+	stringsExtractors []extractor.Strings, valueExtractors []extractor.Value) *binder {
+
+	return &binder{
+		response:          response,
+		request:           request,
+		stringsExtractors: stringsExtractors,
+		valueExtractors:   valueExtractors,
+	}
 }
 
 func (b *binder) bind(v reflect.Value) error {
@@ -46,7 +57,7 @@ func (b *binder) bind(v reflect.Value) error {
 			continue
 		}
 
-		bindingError := &inputError{fieldType: t, field: t.Name()}
+		bindingError := &kcderr.InputError{FieldType: t, Field: t.Name()}
 
 		values, err := b.extractValue(fieldType, bindingError)
 		if err != nil {
@@ -54,7 +65,7 @@ func (b *binder) bind(v reflect.Value) error {
 		}
 
 		if len(values) == 0 {
-			defaultValue, ok := fieldType.Tag.Lookup(defaultTag)
+			defaultValue, ok := fieldType.Tag.Lookup("default")
 			if ok {
 				values = []string{defaultValue}
 			}
@@ -79,14 +90,14 @@ func (b *binder) bind(v reflect.Value) error {
 
 		// Multiple values can only be filled to types Slice and Array.
 		if len(values) > 1 && (kind != reflect.Slice && kind != reflect.Array) {
-			return bindingError.withMessage("multiple values not supported")
+			return bindingError.WithMessage("multiple values not supported")
 		}
 
 		// Ensure that the number of values to fill does not exceed the length of a fieldValue of type Array.
 		if kind == reflect.Array {
 			if fieldValue.Len() != len(values) {
 				msg := fmt.Sprintf("parameter expect %d values, got %d", fieldValue.Len(), len(values))
-				return bindingError.withMessage(msg)
+				return bindingError.WithMessage(msg)
 			}
 		}
 
@@ -101,30 +112,31 @@ func (b *binder) bind(v reflect.Value) error {
 		err = bindStringValue(values[0], fieldValue)
 		if err != nil {
 			return bindingError.
-				withErr(err).
-				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", values[0], fieldValue.Type().Name()))
+				WithErr(err).
+				WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", values[0], fieldValue.Type().Name()))
 		}
 	}
 
 	return nil
 }
 
-func (b *binder) extractValue(fieldType reflect.StructField, bindingError *inputError) ([]string, error) {
-	for tag, extractor := range b.extractors {
+func (b *binder) extractValue(fieldType reflect.StructField, bindingError *kcderr.InputError) ([]string, error) {
+	for _, ex := range b.stringsExtractors {
+		tag := ex.Tag()
 		tagValue := fieldType.Tag.Get(tag)
 		if tagValue == "" {
 			continue
 		}
 
-		bindingError.field = tagValue
-		bindingError.extractor = tag
+		bindingError.Field = tagValue
+		bindingError.Extractor = tag
 
-		values, err := extractor(b.response, b.request, tagValue)
+		values, err := ex.Extract(b.request, b.response, tagValue)
 
 		if err != nil {
 			return nil, bindingError.
-				withErr(err).
-				withMessage("unable to extract value from request")
+				WithErr(err).
+				WithMessage("unable to extract value from request")
 		}
 
 		if len(values) > 0 {
@@ -135,7 +147,7 @@ func (b *binder) extractValue(fieldType reflect.StructField, bindingError *input
 	return nil, nil
 }
 
-func (b *binder) handleSliceAndArray(field reflect.Value, values []string, bindingError *inputError) (err error) {
+func (b *binder) handleSliceAndArray(field reflect.Value, values []string, bindingError *kcderr.InputError) (err error) {
 	kind := field.Kind()
 	// Create a new slice with an adequate
 	// length to set all the values.
@@ -147,8 +159,8 @@ func (b *binder) handleSliceAndArray(field reflect.Value, values []string, bindi
 		err = bindStringValue(val, v)
 		if err != nil {
 			return bindingError.
-				withErr(err).
-				withMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
+				WithErr(err).
+				WithMessage(fmt.Sprintf("unable to set the value %q as type %+v", val, v.Type().Name()))
 		}
 		if kind == reflect.Slice {
 			field.Set(reflect.Append(field, v))

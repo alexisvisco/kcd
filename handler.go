@@ -21,17 +21,17 @@ const (
 //
 //  func([response http.ResponseWriter], [request *http.Request], [input object ptr]) ([output object], error)
 //
-// inputError and output objects are both optional.
+// InputError and output objects are both optional.
 // As such, the minimal accepted signature is:
 //
-//  func(response http.ResponseWriter, request *http.Request) error
+//  func() error
 //
 // The wrapped handler will bind the parameters from the query-string,
-// path, body and headers, and handle the errors.
+// path, body and headers, context, and handle the errors.
 //
 // Handler will panic if the kcd handler or its input/output values
 // are of incompatible type.
-func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
+func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	hv := reflect.ValueOf(h)
 
 	if hv.Kind() != reflect.Func {
@@ -53,7 +53,7 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 			inputStruct := reflect.New(in)
 			input = &inputStruct
 
-			if err := newBinder(w, r, Config.Extractors).bind(inputStruct); err != nil {
+			if err := newBinder(w, r, Config.StringsExtractors, Config.ValueExtractors).bind(inputStruct); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
@@ -70,7 +70,7 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 			}
 		}
 
-		var err, val interface{}
+		var err, outputStruct interface{}
 
 		// funcIn contains the input parameters of the kcd handler call.
 		var args []reflect.Value
@@ -87,7 +87,7 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 
 		ret := hv.Call(args)
 		if out != nil {
-			val = ret[0].Interface()
+			outputStruct = ret[0].Interface()
 			err = ret[1].Interface()
 		} else {
 			err = ret[0].Interface()
@@ -99,7 +99,8 @@ func Handler(h interface{}, defaultSuccessStatusCode int) http.HandlerFunc {
 			return
 		}
 
-		if err := Config.RenderHook(w, r, defaultSuccessStatusCode, val); err != nil {
+		// Render the response.
+		if err := Config.RenderHook(w, r, outputStruct, defaultStatusCode); err != nil {
 			Config.ErrorHook(w, r, err)
 			return
 		}
