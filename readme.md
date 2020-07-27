@@ -2,8 +2,12 @@
 	<img width="460" height="300" src="./.github/golang-ss.gif">
 </p>
 <p align="center">
-	<img href="https://github.com/expectedsh/kcd/actions" width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg">
-	<img href="https://goreportcard.com/report/github.com/expectedsh/kcd" width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd">
+	<a href="https://github.com/expectedsh/kcd/actions">
+		<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
+	<a href="https://goreportcard.com/report/github.com/expectedsh/kcd">
+		<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
+	<a href='https://coveralls.io/github/expectedsh/kcd'>
+		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='Coverage Status' /></a>
 	<img href="https://codecov.io/gh/expectedsh/kcd" src="https://codecov.io/gh/expectedsh/kcd/branch/master/graph/badge.svg" />
 </p>
 
