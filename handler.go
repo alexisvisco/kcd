@@ -53,13 +53,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 			inputStruct := reflect.New(in)
 			input = &inputStruct
 
-			if err := newBinder(w, r, Config.StringsExtractors, Config.ValueExtractors).bind(inputStruct); err != nil {
+			// Bind body
+			if err := Config.BindHook(w, r, input.Interface()); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}
 
-			// Bind body
-			if err := Config.BindHook(w, r, input.Interface()); err != nil {
+			if err := newBinder(w, r, Config.StringsExtractors, Config.ValueExtractors).bind(inputStruct); err != nil {
 				Config.ErrorHook(w, r, err)
 				return
 			}

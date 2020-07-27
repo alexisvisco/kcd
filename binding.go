@@ -74,6 +74,8 @@ func (b *binder) bind(v reflect.Value) error {
 			continue
 		}
 
+		fmt.Println(fieldType.Name, values)
+
 		// If the fieldValue is a nil pointer to a concrete type,
 		// create a new addressable value for this type.
 		if fieldValue.Kind() == reflect.Ptr && fieldValue.IsNil() {
