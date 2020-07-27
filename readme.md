@@ -8,7 +8,6 @@
 		<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
 	<a href='https://coveralls.io/github/expectedsh/kcd'>
 		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='Coverage Status' /></a>
-	<img href="https://codecov.io/gh/expectedsh/kcd" src="https://codecov.io/gh/expectedsh/kcd/branch/master/graph/badge.svg" />
 </p>
 
 ------
