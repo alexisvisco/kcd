@@ -6,6 +6,7 @@
 		<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
 	<a href="https://goreportcard.com/report/github.com/expectedsh/kcd">
 		<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd.svg?type=shield"/></a>
 	<a href='https://coveralls.io/github/expectedsh/kcd'>
 		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='Coverage Status' /></a>
 </p>
@@ -53,3 +54,7 @@ That's all. Well that's it, that's all you should have done if you didn't have K
 
 - [*examples/simple/main.go*](./examples/simple/main.go)
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd?ref=badge_large)
