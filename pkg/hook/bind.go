@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/expectedsh/errors"
+
 	"github.com/expectedsh/kcd/internal/kcderr"
 )
 
@@ -19,11 +21,13 @@ func Bind(maxBodyBytes int64) BindHook {
 
 		bytesBody, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			return &kcderr.InputError{Extractor: "json", Message: "unable to read body"}
+			return errors.Wrap(err, "unable to read body").WithKind(kcderr.InputCritical)
 		}
 
 		if err := json.Unmarshal(bytesBody, in); err != nil {
-			return &kcderr.InputError{Extractor: "json", Message: "unable to unmarshal request"}
+			return errors.Wrap(err, "unable to read json request").
+				WithKind(kcderr.Input).
+				WithField("tag", "json")
 		}
 
 		return nil

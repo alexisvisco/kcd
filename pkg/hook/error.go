@@ -2,6 +2,7 @@ package hook
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -25,6 +26,15 @@ type ErrorResponse struct {
 // It check the error and return the corresponding response to the client.
 func Error(w http.ResponseWriter, r *http.Request, err error) {
 	log.Println("ERROR: ", err) // todo: remove it
+	if err != nil {
+		e, ok := err.(*errors.Error)
+		if ok {
+			fmt.Println(e.FormatStacktrace())
+			e.Log().Error()
+		} else {
+			fmt.Println(err)
+		}
+	}
 
 	response := ErrorResponse{
 		ErrorDescription: "internal server error",
@@ -50,33 +60,57 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 			response.Fields[k] = v.Error()
 		}
 	case *errors.Error:
+		if e.Kind == kcderr.Input {
+			w.WriteHeader(http.StatusBadRequest)
+			response.Error = errors.KindInvalidArgument
+			response.ErrorDescription = http.StatusText(http.StatusBadRequest)
+
+			// TODO(alexis) 23/08/2020: maybe handle ctx tag as a internal server error because it is handled by the
+			// 							input is provided by the developer and it is not an user input.
+
+			tag, _ := e.GetField("tag")
+			path, _ := e.GetField("path")
+			switch tag {
+			case "query", "path", "header", "ctx":
+				response.Fields[path.(string)] = e.Message
+			case "json":
+				response.ErrorDescription = e.Message
+			}
+
+			break
+		}
+
+		if e.Kind == kcderr.InputCritical {
+			w.WriteHeader(http.StatusInternalServerError)
+			response.Error = e.Kind
+			response.ErrorDescription = e.Message
+
+			// TODO(alexis) 23/08/2020: show log
+
+			break
+		}
+
+		if e.Kind == kcderr.OutputCritical {
+			w.WriteHeader(http.StatusInternalServerError)
+			response.Error = e.Kind
+			response.ErrorDescription = e.Message
+
+			// TODO(alexis) 23/08/2020: show log
+
+			break
+		}
+
 		w.WriteHeader(e.Kind.ToStatusCode())
 
 		response.ErrorDescription = e.Message
 		response.Error = e.Kind
-	case *kcderr.InputError:
-		w.WriteHeader(http.StatusBadRequest)
-		response.Error = errors.KindInvalidArgument
-		response.ErrorDescription = http.StatusText(http.StatusBadRequest)
 
-		switch e.Extractor {
-		case "query", "path", "header", "ctx":
-			response.Fields[e.Field] = e.Message
-		case "json":
-			response.ErrorDescription = e.Message
-		}
-	case *kcderr.OutputError:
-		w.WriteHeader(http.StatusInternalServerError)
-
-		response.Error = errors.KindInternal
-		response.ErrorDescription = e.Error()
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 		response.Error = errors.KindInternal
-		// todo: log the error
-	}
 
-	// todo: use a log hook to log kcd real (critic) error
+		// TODO(alexis) 23/08/2020: show log
+	}
 
 	marshal, err := json.Marshal(response)
 	if err != nil {

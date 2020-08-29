@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -9,6 +10,7 @@ type Context struct{}
 
 // Extract value from the context of the request.
 func (c Context) Extract(req *http.Request, _ http.ResponseWriter, valueOfTag string) (interface{}, error) {
+	fmt.Println(req.Context().Value(valueOfTag), valueOfTag)
 	return req.Context().Value(valueOfTag), nil
 }
 
