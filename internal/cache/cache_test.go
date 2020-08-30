@@ -243,7 +243,7 @@ func TestStructAnalyzer_Cache(t *testing.T) {
 
 	for _, assertion := range tableTesting {
 		t.Run(assertion.name, func(t *testing.T) {
-			analyzer := NewStructAnalyzer([]string{"query", "path"}, reflect.TypeOf(assertion.st))
+			analyzer := NewStructAnalyzer([]string{"query", "path"}, []string{}, reflect.TypeOf(assertion.st))
 			assertion.expectation(analyzer.Cache(), t)
 		})
 	}

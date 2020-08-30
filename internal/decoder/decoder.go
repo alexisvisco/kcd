@@ -1,4 +1,4 @@
-package decoding
+package decoder
 
 import (
 	"net/http"
@@ -36,7 +36,7 @@ type previousFields struct {
 	uninitialized [][]int
 }
 
-func (d previousFields) getCurrentValue() reflect.Value {
+func (d previousFields) getCurrentReflectValue() reflect.Value {
 	var field = d.root
 
 	for _, fieldIndex := range d.uninitialized {
@@ -66,7 +66,7 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	fieldsToSet := make([]setterContext, 0, len(c.Resolvable))
 
 	for _, metadata := range c.Resolvable {
-		tag, path, v, err := d.value(metadata)
+		tag, path, v, err := d.getValueFromHttp(metadata)
 		if err != nil {
 			return err
 		}
@@ -83,7 +83,7 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	}
 
 	if len(fieldsToSet) > 0 {
-		currentValue := prev.getCurrentValue()
+		currentValue := prev.getCurrentReflectValue()
 
 		prev = previousFields{
 			root:          currentValue,
@@ -130,7 +130,7 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 
 }
 
-func (d Decoder) value(r cache.FieldMetadata) (tag, key string, v interface{}, err error) {
+func (d Decoder) getValueFromHttp(r cache.FieldMetadata) (tag, key string, val interface{}, err error) {
 	for _, e := range d.stringsExtractors {
 		path, ok := r.Paths[e.Tag()]
 		if ok {

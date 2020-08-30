@@ -1,7 +1,6 @@
 package kcd_test
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -20,6 +19,7 @@ const (
 )
 
 type hookBindStruct struct {
+	Uint          uint    `path:"uint"`
 	JsonName      string  `json:"name"`
 	QueryString   string  `query:"query_string"`
 	QueryFloat    float32 `query:"query_float"`
@@ -41,9 +41,9 @@ type hookBindStruct struct {
 
 	FilledStruct *StructOne
 
-	StructWithUnmarshaller *StructWithUnmarshaller `query:"struct_with_unmarshaller"`
+	StructWithTextUnmarshaller *StructWithTextUnmarshaller `query:"struct_with_text_unmarshaller"`
 
-	SliceStructWithUnmarshaller []*StructWithUnmarshaller `query:"slice_struct_with_unmarshaller"`
+	SliceStructWithTextUnmarshaller []*StructWithTextUnmarshaller `query:"slice_struct_with_text_unmarshaller"`
 
 	Duration time.Duration `query:"duration"`
 
@@ -54,6 +54,14 @@ type hookBindStruct struct {
 	ArrayDuration [2]time.Duration `query:"array_duration"`
 
 	ArrayInt *[3]int `query:"array_int"`
+
+	StructWithJSONUnmarshaller *StructWithJSONUnmarshaller `query:"struct_with_json_unmarshaller"`
+
+	StructWithBinaryUnmarshaller *StructWithBinaryUnmarshaller `query:"struct_with_binary_unmarshaller"`
+
+	SlicePtrString []*string `query:"slice_ptr_string"`
+
+	SliceInt []int `query:"slice_int"`
 }
 
 type Embedded struct {
@@ -76,11 +84,11 @@ type StructTwo struct {
 	FilledField string `query:"filled_field"`
 }
 
-type StructWithUnmarshaller struct {
+type StructWithTextUnmarshaller struct {
 	Value string
 }
 
-func (s *StructWithUnmarshaller) UnmarshalText(text []byte) error {
+func (s *StructWithTextUnmarshaller) UnmarshalText(text []byte) error {
 	s.Value = strings.ToUpper(string(text))
 
 	return nil
@@ -88,6 +96,25 @@ func (s *StructWithUnmarshaller) UnmarshalText(text []byte) error {
 
 func hookBindHandler(bindStruct *hookBindStruct) (hookBindStruct, error) {
 	return *bindStruct, nil
+}
+
+type StructWithJSONUnmarshaller struct {
+	Value string
+}
+
+func (s *StructWithJSONUnmarshaller) UnmarshalJSON(bytes []byte) error {
+	s.Value = string(bytes)
+
+	return nil
+}
+
+type StructWithBinaryUnmarshaller struct {
+	Value string
+}
+
+func (s *StructWithBinaryUnmarshaller) UnmarshalBinary(data []byte) error {
+	s.Value = string(data)
+	return nil
 }
 
 func TestBind(t *testing.T) {
@@ -112,9 +139,9 @@ func TestBind(t *testing.T) {
 			WithQuery("embedded_string", "embedded_string").
 			WithQuery("embedded_string_ptr", "embedded_string_ptr").
 			WithQuery("filled_field", "filled_field").
-			WithQuery("struct_with_unmarshaller", "struct_with_unmarshaller").
-			WithQuery("slice_struct_with_unmarshaller", "one").
-			WithQuery("slice_struct_with_unmarshaller", "two").
+			WithQuery("struct_with_text_unmarshaller", "struct_with_text_unmarshaller").
+			WithQuery("slice_struct_with_text_unmarshaller", "one").
+			WithQuery("slice_struct_with_text_unmarshaller", "two").
 			WithQuery("duration", "45s").
 			WithQuery("slice_duration", "45s").
 			WithQuery("slice_duration", "2s").
@@ -125,14 +152,19 @@ func TestBind(t *testing.T) {
 			WithQuery("array_int", "1").
 			WithQuery("array_int", "2").
 			WithQuery("array_int", "3").
+			WithQuery("struct_with_json_unmarshaller", `{"hi": 1}`).
+			WithQuery("struct_with_binary_unmarshaller", `goijerierjoer`).
+			WithQuery("slice_ptr_string", `hey`).
+			WithQuery("slice_ptr_string", `how`).
+			WithQuery("slice_int", 0).
 			Expect()
 
 		raw := expect.Body().Raw()
-		fmt.Println(raw)
 
 		assert.NotContains(t, raw, "EmbeddedStringPtrNil")
 
 		j := expect.JSON()
+		j.Path("$.Uint").Equal(4)
 		j.Path("$.name").Equal(ValString)
 		j.Path("$.QueryString").Equal("query_string")
 		j.Path("$.QueryFloat").Equal(1.4)
@@ -145,8 +177,8 @@ func TestBind(t *testing.T) {
 		j.Path("$.EmbeddedString").Equal("embedded_string")
 		j.Path("$.EmbeddedStringPtr").Equal("embedded_string_ptr")
 		j.Path("$.FilledStruct.Inner.FilledField").Equal("filled_field")
-		j.Path("$.StructWithUnmarshaller.Value").Equal("STRUCT_WITH_UNMARSHALLER")
-		j.Path("$.SliceStructWithUnmarshaller").Equal([]map[string]interface{}{
+		j.Path("$.StructWithTextUnmarshaller.Value").Equal("STRUCT_WITH_TEXT_UNMARSHALLER")
+		j.Path("$.SliceStructWithTextUnmarshaller").Equal([]map[string]interface{}{
 			{"Value": "ONE"},
 			{"Value": "TWO"},
 		})
@@ -155,7 +187,10 @@ func TestBind(t *testing.T) {
 		j.Path("$.SlicePointer").Equal([]string{"one", "two"})
 		j.Path("$.ArrayDuration").Equal([]time.Duration{time.Second * 45, time.Second * 2})
 		j.Path("$.ArrayInt").Equal([]int{1, 2, 3})
-
+		j.Path("$.StructWithJSONUnmarshaller.Value").Equal(`{"hi": 1}`)
+		j.Path("$.StructWithBinaryUnmarshaller.Value").Equal(`goijerierjoer`)
+		j.Path("$.SlicePtrString").Equal([]string{"hey", "how"})
+		j.Path("$.SliceInt").Equal([]int{0})
 	})
 
 	t.Run("it should fail because of invalid body", func(t *testing.T) {
@@ -168,5 +203,35 @@ func TestBind(t *testing.T) {
 		e.POST("/3").Expect().
 			Status(http.StatusOK).
 			JSON().Path("$.name").Equal("")
+	})
+
+	t.Run("it should fail because of invalid uint", func(t *testing.T) {
+		e.POST("/-3").Expect().
+			Status(http.StatusBadRequest).
+			JSON().Path("$.fields.uint").Equal("invalid positive integer")
+	})
+
+	t.Run("it should fail because of invalid boolean", func(t *testing.T) {
+		e.POST("/4").WithQuery("query_bool", "yes").Expect().
+			Status(http.StatusBadRequest).
+			JSON().Path("$.fields.query_bool").Equal("invalid boolean")
+	})
+
+	t.Run("it should fail because of invalid float", func(t *testing.T) {
+		e.POST("/4").WithQuery("query_float", "yes").Expect().
+			Status(http.StatusBadRequest).
+			JSON().Path("$.fields.query_float").Equal("invalid floating number")
+	})
+
+	t.Run("it should fail because of invalid duration", func(t *testing.T) {
+		e.POST("/4").WithQuery("duration", "yes").Expect().
+			Status(http.StatusBadRequest).
+			JSON().Path("$.fields.duration").Equal("unable to parse duration (format: 1ms, 1s, 3h3s)")
+	})
+
+	t.Run("it should fail because of invalid duration", func(t *testing.T) {
+		e.POST("/4").WithQuery("slice_int", "yes").Expect().
+			Status(http.StatusBadRequest).
+			JSON().Path("$.fields.slice_int").Equal("invalid integer")
 	})
 }

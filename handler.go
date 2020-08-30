@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/expectedsh/kcd/internal/cache"
-	"github.com/expectedsh/kcd/internal/decoding"
+	"github.com/expectedsh/kcd/internal/decoder"
 )
 
 type inputType int
@@ -47,7 +47,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	orderInput, in := input(ht, funcName)
 	out := output(ht, funcName)
 
-	cacheStruct := cache.NewStructAnalyzer(append(Config.tags(), "default"), in).Cache()
+	cacheStruct := cache.NewStructAnalyzer(Config.stringsTags(), Config.valuesTags(), in).Cache()
 
 	var input reflect.Value
 
@@ -61,20 +61,20 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 
 			// Bind body
 			if err := Config.BindHook(w, r, input.Interface()); err != nil {
-				Config.ErrorHook(w, r, err)
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 
-			err := decoding.NewDecoder(r, w, Config.StringsExtractors, Config.ValueExtractors).
+			err := decoder.NewDecoder(r, w, Config.StringsExtractors, Config.ValueExtractors).
 				Decode(cacheStruct, input)
 
 			if err != nil {
-				Config.ErrorHook(w, r, err)
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 
 			if err := Config.ValidateHook(r.Context(), inputStruct.Interface()); err != nil {
-				Config.ErrorHook(w, r, err)
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 		}
@@ -104,13 +104,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 
 		// Handle the error returned by the handler invocation, if any.
 		if err != nil {
-			Config.ErrorHook(w, r, err.(error))
+			Config.ErrorHook(w, r, err.(error), Config.LogHook)
 			return
 		}
 
 		// Render the response.
 		if err := Config.RenderHook(w, r, outputStruct, defaultStatusCode); err != nil {
-			Config.ErrorHook(w, r, err)
+			Config.ErrorHook(w, r, err, Config.LogHook)
 			return
 		}
 	}

@@ -52,20 +52,20 @@ type ExtractorTestStruct struct {
 	PtrFloat32 *float32 `query:"ptr_float32" ctx:"ptr_float32"  path:"ptr_float32" header:"ptr_float32"`
 	PtrFloat64 *float64 `query:"ptr_float64" ctx:"ptr_float64"  path:"ptr_float64" header:"ptr_float64"`
 
-	ArrStr     []string  `query:"arr_str" ctx:"arr_str"  path:"arr_str" header:"arr_str"`
-	ArrBool    []bool    `query:"arr_bool" ctx:"arr_bool"  path:"arr_bool" header:"arr_bool"`
-	ArrInt     []int     `query:"arr_int" ctx:"arr_int"  path:"arr_int" header:"arr_int"`
-	ArrInt8    []int8    `query:"arr_int8" ctx:"arr_int8"  path:"arr_int8" header:"arr_int8"`
-	ArrInt16   []int16   `query:"arr_int16" ctx:"arr_int16"  path:"arr_int16" header:"arr_int16"`
-	ArrInt32   []int32   `query:"arr_int32" ctx:"arr_int32"  path:"arr_int32" header:"arr_int32"`
-	ArrInt64   []int64   `query:"arr_int64" ctx:"arr_int64"  path:"arr_int64" header:"arr_int64"`
-	ArrUint    []uint    `query:"arr_uint" ctx:"arr_uint"  path:"arr_uint" header:"arr_uint"`
-	ArrUint8   []uint8   `query:"arr_uint8" ctx:"arr_uint8"  path:"arr_uint8" header:"arr_uint8"`
-	ArrUint16  []uint16  `query:"arr_uint16" ctx:"arr_uint16"  path:"arr_uint16" header:"arr_uint16"`
-	ArrUint32  []uint32  `query:"arr_uint32" ctx:"arr_uint32"  path:"arr_uint32" header:"arr_uint32"`
-	ArrUint64  []uint64  `query:"arr_uint64" ctx:"arr_uint64"  path:"arr_uint64" header:"arr_uint64"`
-	ArrFloat32 []float32 `query:"arr_float32" ctx:"arr_float32"  path:"arr_float32" header:"arr_float32"`
-	ArrFloat64 []float64 `query:"arr_float64" ctx:"arr_float64"  path:"arr_float64" header:"arr_float64"`
+	ArrStr     []string  `query:"arr_str" path:"arr_str" header:"arr_str"`
+	ArrBool    []bool    `query:"arr_bool" path:"arr_bool" header:"arr_bool"`
+	ArrInt     []int     `query:"arr_int" path:"arr_int" header:"arr_int"`
+	ArrInt8    []int8    `query:"arr_int8" path:"arr_int8" header:"arr_int8"`
+	ArrInt16   []int16   `query:"arr_int16" path:"arr_int16" header:"arr_int16"`
+	ArrInt32   []int32   `query:"arr_int32" path:"arr_int32" header:"arr_int32"`
+	ArrInt64   []int64   `query:"arr_int64" path:"arr_int64" header:"arr_int64"`
+	ArrUint    []uint    `query:"arr_uint" path:"arr_uint" header:"arr_uint"`
+	ArrUint8   []uint8   `query:"arr_uint8" path:"arr_uint8" header:"arr_uint8"`
+	ArrUint16  []uint16  `query:"arr_uint16" path:"arr_uint16" header:"arr_uint16"`
+	ArrUint32  []uint32  `query:"arr_uint32" path:"arr_uint32" header:"arr_uint32"`
+	ArrUint64  []uint64  `query:"arr_uint64" path:"arr_uint64" header:"arr_uint64"`
+	ArrFloat32 []float32 `query:"arr_float32" path:"arr_float32" header:"arr_float32"`
+	ArrFloat64 []float64 `query:"arr_float64" path:"arr_float64" header:"arr_float64"`
 
 	EmbeddedExtractorTest
 	*EmbeddedPtrExtractorTest
@@ -79,15 +79,15 @@ type ExtractorTestStruct struct {
 }
 
 type EmbeddedExtractorTest struct {
-	StrE string `query:"str_embedded" ctx:"str_embedded"  path:"str_embedded" header:"str_embedded"`
+	StrE string `query:"str_embedded" path:"str_embedded" header:"str_embedded"`
 }
 
 type EmbeddedPtrExtractorTest struct {
-	StrEP string `query:"str_ptr_embedded" ctx:"str_ptr_embedded"  path:"str_ptr_embedded" header:"str_ptr_embedded"`
+	StrEP string `query:"str_ptr_embedded" path:"str_ptr_embedded" header:"str_ptr_embedded"`
 }
 
 type SubStructExtractorTest struct {
-	StrS string `query:"sub_struct_str_s" ctx:"sub_struct_str_s"  path:"sub_struct_str_s" header:"sub_struct_str_s"`
+	StrS string `query:"sub_struct_str_s" path:"sub_struct_str_s" header:"sub_struct_str_s"`
 }
 
 func extractorHandler(req *ExtractorTestStruct) (response ExtractorTestStruct, err error) {

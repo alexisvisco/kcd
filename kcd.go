@@ -14,6 +14,7 @@ type Configuration struct {
 	BindHook     hook.BindHook
 	ValidateHook hook.ValidateHook
 	RenderHook   hook.RenderHook
+	LogHook      hook.LogHook
 }
 
 // Config is the instance of Configuration type.
@@ -27,18 +28,25 @@ var Config = Configuration{
 	RenderHook:   hook.Render,
 	BindHook:     hook.Bind(256 * 1024),
 	ValidateHook: hook.Validate,
+	LogHook:      hook.Log,
 }
 
-func (c Configuration) tags() []string {
-	tags := make([]string, 0, len(c.StringsExtractors)+len(c.ValueExtractors))
+func (c Configuration) stringsTags() []string {
+	tags := make([]string, 0, len(c.StringsExtractors))
 
 	for _, se := range c.StringsExtractors {
 		tags = append(tags, se.Tag())
 	}
 
+	return tags
+}
+
+func (c Configuration) valuesTags() []string {
+	tags := make([]string, 0, len(c.ValueExtractors)+1)
+
 	for _, ve := range c.ValueExtractors {
 		tags = append(tags, ve.Tag())
 	}
 
-	return tags
+	return append(tags, "default")
 }

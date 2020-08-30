@@ -2,8 +2,6 @@ package hook
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/expectedsh/errors"
@@ -24,18 +22,7 @@ type ErrorResponse struct {
 
 // Error is the default error hook.
 // It check the error and return the corresponding response to the client.
-func Error(w http.ResponseWriter, r *http.Request, err error) {
-	log.Println("ERROR: ", err) // todo: remove it
-	if err != nil {
-		e, ok := err.(*errors.Error)
-		if ok {
-			fmt.Println(e.FormatStacktrace())
-			e.Log().Error()
-		} else {
-			fmt.Println(err)
-		}
-	}
-
+func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 	response := ErrorResponse{
 		ErrorDescription: "internal server error",
 		Error:            errors.KindInternal,
@@ -66,7 +53,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 			response.ErrorDescription = http.StatusText(http.StatusBadRequest)
 
 			// TODO(alexis) 23/08/2020: maybe handle ctx tag as a internal server error because it is handled by the
-			// 							input is provided by the developer and it is not an user input.
+			// 							input provided by the developer and it is not an user input.
 
 			tag, _ := e.GetField("tag")
 			path, _ := e.GetField("path")
@@ -85,7 +72,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 			response.Error = e.Kind
 			response.ErrorDescription = e.Message
 
-			// TODO(alexis) 23/08/2020: show log
+			logger(w, r, e)
 
 			break
 		}
@@ -95,7 +82,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 			response.Error = e.Kind
 			response.ErrorDescription = e.Message
 
-			// TODO(alexis) 23/08/2020: show log
+			logger(w, r, e)
 
 			break
 		}
@@ -105,11 +92,14 @@ func Error(w http.ResponseWriter, r *http.Request, err error) {
 		response.ErrorDescription = e.Message
 		response.Error = e.Kind
 
+		if e.Kind.ToStatusCode() >= 500 {
+			logger(w, r, e)
+		}
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 		response.Error = errors.KindInternal
 
-		// TODO(alexis) 23/08/2020: show log
+		logger(w, r, e)
 	}
 
 	marshal, err := json.Marshal(response)

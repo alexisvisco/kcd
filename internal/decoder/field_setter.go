@@ -1,4 +1,4 @@
-package decoding
+package decoder
 
 import (
 	"encoding"
@@ -78,16 +78,17 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 		array   = false
 	)
 
-	isTypePtr := f.metadata.Type.Kind() == reflect.Ptr
+	isTypePtr := false
 	elemType := f.field.Type()
 	array = f.field.Type().Kind() == reflect.Array
 
 	if ptr {
 		array = f.field.Type().Elem().Kind() == reflect.Array
 		elemType = elemType.Elem()
+		isTypePtr = f.field.Type().Elem().Elem().Kind() == reflect.Ptr
+	} else {
+		isTypePtr = f.field.Type().Elem().Kind() == reflect.Ptr
 	}
-
-	fmt.Println(elemType, array)
 
 	if array {
 		element = reflect.New(elemType)
@@ -105,10 +106,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 
 	for i, val := range list {
 		if types.IsCustomType(f.metadata.Type) {
-			if isTypePtr {
-				f.metadata.Type = f.metadata.Type.Elem()
-			}
-
 			native, err := f.makeCustomType(val, isTypePtr)
 			if err != nil {
 				return err.WithField("value-index", i)
@@ -116,10 +113,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 
 			addToElem(i, native)
 		} else if types.IsNative(f.metadata.Type) {
-			if isTypePtr {
-				f.metadata.Type = f.metadata.Type.Elem()
-			}
-
 			native, err := f.makeNative(val, isTypePtr)
 			if err != nil {
 				return err.WithField("value-index", i)
@@ -258,7 +251,7 @@ func (f fieldSetter) makeNative(str string, ptr bool) (reflect.Value, *errors.Er
 		return el.Elem(), nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this value").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
 		WithFields(f.errFields)
 }
 
@@ -308,7 +301,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		return el, nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this value").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
 		WithFields(f.errFields)
 }
 
@@ -331,6 +324,6 @@ func (f fieldSetter) makeCustomType(str string, ptr bool) (reflect.Value, *error
 		return el.Elem(), nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this value").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
 		WithFields(f.errFields)
 }

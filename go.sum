@@ -20,6 +20,8 @@ github.com/expectedsh/errors v0.0.0-20200823082013-36de056f5321 h1:tFP+DwGIfuG+r
 github.com/expectedsh/errors v0.0.0-20200823082013-36de056f5321/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
 github.com/expectedsh/errors v0.0.0-20200823083836-4979d7a2e3ef h1:k7dkoAgchRZl7QYRLz+pElX+f+wfcUJeBN5Sw3Jy8JU=
 github.com/expectedsh/errors v0.0.0-20200823083836-4979d7a2e3ef/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
+github.com/expectedsh/errors v0.0.0-20200830122803-56db442d28c1 h1:oeIUiostM+0AkS8yW7TT3MCYcYk5E4gm34hUqWxNxzE=
+github.com/expectedsh/errors v0.0.0-20200830122803-56db442d28c1/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
 github.com/fatih/structs v1.1.0 h1:Q7juDM0QtcnhCpeyLGQKyg4TOIghuNXrkL32pHAUMxo=
 github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga6PJ7M=
 github.com/gavv/httpexpect v1.1.2 h1:AitIwySfBLk6Ev61dNFnbLqIXmj68ScjeGcQiaid6fg=
@@ -88,6 +90,8 @@ golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 h1:OjiUf46hAmXblsZdnoSXsEUSK
 golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200821140526-fda516888d29 h1:mNuhGagCf3lDDm5C0376C/sxh6V7fy9WbdEu/YDNA04=
 golang.org/x/sys v0.0.0-20200821140526-fda516888d29/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200828194041-157a740278f4 h1:kCCpuwSAoYJPkNc6x0xT9yTtV4oKtARo4RGBQWOfg9E=
+golang.org/x/sys v0.0.0-20200828194041-157a740278f4/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

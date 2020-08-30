@@ -26,3 +26,13 @@ func (t TagsPath) clone() TagsPath {
 
 	return n
 }
+
+func (t TagsPath) hasValueTag(set []string) bool {
+	for _, v := range set {
+		_, ok := t[v]
+		if ok {
+			return true
+		}
+	}
+	return false
+}

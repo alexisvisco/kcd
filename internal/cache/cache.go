@@ -9,6 +9,7 @@ import (
 
 type StructAnalyzer struct {
 	tags           []string
+	valueTag       []string
 	mainStructType reflect.Type
 }
 
@@ -35,8 +36,13 @@ type FieldMetadata struct {
 	Exploder              string
 }
 
-func NewStructAnalyzer(tagsToLookup []string, mainStructType reflect.Type) *StructAnalyzer {
-	return &StructAnalyzer{tags: tagsToLookup, mainStructType: mainStructType}
+func NewStructAnalyzer(stringsTags, valueTags []string, mainStructType reflect.Type) *StructAnalyzer {
+
+	return &StructAnalyzer{
+		tags:           append(stringsTags, valueTags...),
+		valueTag:       valueTags,
+		mainStructType: mainStructType,
+	}
 }
 
 func (s StructAnalyzer) Cache() StructCache {
@@ -78,8 +84,9 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 			containTags = true
 		}
 
-		if structField.Anonymous || metadata.Type.Kind() == reflect.Struct {
+		hasValueTag := currentPaths.hasValueTag(s.valueTag)
 
+		if !hasValueTag && (structField.Anonymous || metadata.Type.Kind() == reflect.Struct) {
 			childStructCache := newStructCacheFromField(structField)
 			childStructContainTag := s.cache(&childStructCache, currentPaths, metadata.Type)
 
@@ -94,7 +101,7 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 			}
 		}
 
-		if metadata.Type.Kind() == reflect.Slice || metadata.Type.Kind() == reflect.Array {
+		if !hasValueTag && (metadata.Type.Kind() == reflect.Slice || metadata.Type.Kind() == reflect.Array) {
 			typeOfArray := metadata.Type.Elem()
 			if !sanitizePtrType(&typeOfArray) {
 				continue
@@ -105,7 +112,8 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 
 		}
 
-		if !(fieldHasTag && (metadata.ImplementUnmarshaller || types.IsUnmarshallable(metadata.Type))) {
+		if !(hasValueTag || (fieldHasTag && (metadata.ImplementUnmarshaller || types.IsUnmarshallable(metadata.Type)))) {
+
 			continue
 
 		}
@@ -115,6 +123,7 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 		metadata.Paths = currentPaths
 
 		cache.Resolvable = append(cache.Resolvable, metadata)
+
 	}
 
 	return containTags
