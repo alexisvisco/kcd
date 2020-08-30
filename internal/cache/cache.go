@@ -37,7 +37,6 @@ type FieldMetadata struct {
 }
 
 func NewStructAnalyzer(stringsTags, valueTags []string, mainStructType reflect.Type) *StructAnalyzer {
-
 	return &StructAnalyzer{
 		tags:           append(stringsTags, valueTags...),
 		valueTag:       valueTags,
@@ -109,13 +108,10 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 
 			metadata.ArrayOrSlice = true
 			metadata.Type = typeOfArray
-
 		}
 
 		if !(hasValueTag || (fieldHasTag && (metadata.ImplementUnmarshaller || types.IsUnmarshallable(metadata.Type)))) {
-
 			continue
-
 		}
 
 		metadata.DefaultValue = structField.Tag.Get("default")
@@ -123,7 +119,6 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 		metadata.Paths = currentPaths
 
 		cache.Resolvable = append(cache.Resolvable, metadata)
-
 	}
 
 	return containTags

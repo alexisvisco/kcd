@@ -22,7 +22,6 @@ func Render(w http.ResponseWriter, _ *http.Request, response interface{}, status
 		w.WriteHeader(statusCode)
 		if _, err := w.Write(marshal); err != nil {
 			return errors.Wrap(err, "unable to write response").WithKind(kcderr.OutputCritical)
-
 		}
 	} else {
 		w.WriteHeader(statusCode)

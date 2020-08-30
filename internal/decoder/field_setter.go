@@ -105,28 +105,29 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 	}
 
 	for i, val := range list {
-		if types.IsCustomType(f.metadata.Type) {
+		switch {
+		case types.IsCustomType(f.metadata.Type):
 			native, err := f.makeCustomType(val, isTypePtr)
 			if err != nil {
 				return err.WithField("value-index", i)
 			}
 
 			addToElem(i, native)
-		} else if types.IsNative(f.metadata.Type) {
+		case types.IsNative(f.metadata.Type):
 			native, err := f.makeNative(val, isTypePtr)
 			if err != nil {
 				return err.WithField("value-index", i)
 			}
 
 			addToElem(i, native)
-		} else if types.IsImplementingUnmarshaller(f.metadata.Type) {
+		case types.IsImplementingUnmarshaller(f.metadata.Type):
 			withUnmarshaller, err := f.makeWithUnmarshaller(val)
 			if err != nil {
 				return err.WithField("value-index", i)
 			}
 
 			addToElem(i, withUnmarshaller)
-		} else {
+		default:
 			return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 				WithFields(f.errFields).
 				WithField("value-index", i)
@@ -153,28 +154,29 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 }
 
 func (f fieldSetter) setForNormalType(str string, ptr bool) error {
-	if types.IsCustomType(f.metadata.Type) {
+	switch {
+	case types.IsCustomType(f.metadata.Type):
 		customType, err := f.makeCustomType(str, ptr)
 		if err != nil {
 			return err
 		}
 
 		f.field.Set(customType)
-	} else if types.IsNative(f.metadata.Type) {
+	case types.IsNative(f.metadata.Type):
 		native, err := f.makeNative(str, ptr)
 		if err != nil {
 			return err
 		}
 
 		f.field.Set(native)
-	} else if types.IsImplementingUnmarshaller(f.metadata.Type) {
+	case types.IsImplementingUnmarshaller(f.metadata.Type):
 		withUnmarshaller, err := f.makeWithUnmarshaller(str)
 		if err != nil {
 			return err
 		}
 
 		f.field.Set(withUnmarshaller)
-	} else {
+	default:
 		return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 			WithFields(f.errFields)
 	}
@@ -251,7 +253,7 @@ func (f fieldSetter) makeNative(str string, ptr bool) (reflect.Value, *errors.Er
 		return el.Elem(), nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHTTP").
 		WithFields(f.errFields)
 }
 
@@ -264,7 +266,6 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 	}
 
 	if el.Type().Implements(types.UnmarshallerText) {
-
 		t := el.Interface().(encoding.TextUnmarshaler)
 
 		err := t.UnmarshalText([]byte(str))
@@ -277,7 +278,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		return el, nil
 	}
 
-	if el.Type().Implements(types.JsonUnmarshaller) {
+	if el.Type().Implements(types.JSONUnmarshaller) {
 		t := el.Interface().(json.Unmarshaler)
 		err := t.UnmarshalJSON([]byte(str))
 		if err != nil {
@@ -301,7 +302,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		return el, nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHTTP").
 		WithFields(f.errFields)
 }
 
@@ -324,6 +325,6 @@ func (f fieldSetter) makeCustomType(str string, ptr bool) (reflect.Value, *error
 		return el.Elem(), nil
 	}
 
-	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHttp").
+	return reflect.Value{}, errors.NewWithKind(kcderr.InputCritical, "an error occur with this getValueFromHTTP").
 		WithFields(f.errFields)
 }

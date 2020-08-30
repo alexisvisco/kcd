@@ -20,7 +20,7 @@ const (
 
 type hookBindStruct struct {
 	Uint          uint    `path:"uint"`
-	JsonName      string  `json:"name"`
+	JSONName      string  `json:"name"`
 	QueryString   string  `query:"query_string"`
 	QueryFloat    float32 `query:"query_float"`
 	QueryBool     bool    `query:"query_bool"`
@@ -128,7 +128,7 @@ func TestBind(t *testing.T) {
 
 	t.Run("it should succeed", func(t *testing.T) {
 		expect := e.POST("/4").
-			WithJSON(hookBindStruct{JsonName: ValString}).
+			WithJSON(hookBindStruct{JSONName: ValString}).
 			WithQuery("query_string", "query_string").
 			WithQuery("query_float", 1.4).
 			WithQuery("query_bool", true).

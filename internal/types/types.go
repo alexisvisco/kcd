@@ -16,7 +16,7 @@ var Unmarshallers = []reflect.Type{
 var (
 	UnmarshallerText   = Unmarshallers[0]
 	BinaryUnmarshaller = Unmarshallers[1]
-	JsonUnmarshaller   = Unmarshallers[2]
+	JSONUnmarshaller   = Unmarshallers[2]
 )
 
 func IsImplementingUnmarshaller(t reflect.Type) bool {

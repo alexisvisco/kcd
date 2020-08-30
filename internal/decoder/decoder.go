@@ -40,7 +40,6 @@ func (d previousFields) getCurrentReflectValue() reflect.Value {
 	var field = d.root
 
 	for _, fieldIndex := range d.uninitialized {
-
 		if field.Kind() == reflect.Ptr {
 			field = field.Elem().FieldByIndex(fieldIndex)
 		} else {
@@ -66,13 +65,12 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	fieldsToSet := make([]setterContext, 0, len(c.Resolvable))
 
 	for _, metadata := range c.Resolvable {
-		tag, path, v, err := d.getValueFromHttp(metadata)
+		tag, path, v, err := d.getValueFromHTTP(metadata)
 		if err != nil {
 			return err
 		}
 
 		if v != nil {
-
 			fieldsToSet = append(fieldsToSet, setterContext{
 				tag:      tag,
 				path:     path,
@@ -106,7 +104,7 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	}
 
 	for _, structCache := range c.Child {
-		tmpRoot := root
+		var newRoot reflect.Type
 
 		newPreviousFields := previousFields{
 			root:          prev.root,
@@ -114,23 +112,22 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 		}
 
 		if root.Kind() == reflect.Ptr {
-			tmpRoot = root.Elem().FieldByIndex(structCache.Index).Type
+			newRoot = root.Elem().FieldByIndex(structCache.Index).Type
 			newPreviousFields.uninitialized = append(newPreviousFields.uninitialized, structCache.Index)
 		} else {
-			tmpRoot = root.FieldByIndex(structCache.Index).Type
+			newRoot = root.FieldByIndex(structCache.Index).Type
 			newPreviousFields.uninitialized = append(newPreviousFields.uninitialized, structCache.Index)
 		}
 
-		if err := d.decode(structCache, tmpRoot, newPreviousFields); err != nil {
+		if err := d.decode(structCache, newRoot, newPreviousFields); err != nil {
 			return err
 		}
 	}
 
 	return nil
-
 }
 
-func (d Decoder) getValueFromHttp(r cache.FieldMetadata) (tag, key string, val interface{}, err error) {
+func (d Decoder) getValueFromHTTP(r cache.FieldMetadata) (tag, key string, val interface{}, err error) {
 	for _, e := range d.stringsExtractors {
 		path, ok := r.Paths[e.Tag()]
 		if ok {
@@ -160,8 +157,7 @@ func (d Decoder) getValueFromHttp(r cache.FieldMetadata) (tag, key string, val i
 			}
 
 			if len(r.Exploder) > 0 && r.ArrayOrSlice {
-				switch t := v.(type) {
-				case string:
+				if t, ok := v.(string); ok {
 					list := strings.Split(t, r.Exploder)
 					if len(list) > 1 {
 						return "", "", list, nil
