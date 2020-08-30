@@ -35,11 +35,6 @@ jobs:
 
     - name: tests
       run: go test -v .
-
-    - name: upload coverage
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: go test -coverprofile=coverage.txt -covermode=atomic && bash <(curl -s https://codecov.io/bash)
     
     - name: Calc coverage
       run: go test -v -coverpkg=./...  -covermode=count -coverprofile=coverage.out ./...
