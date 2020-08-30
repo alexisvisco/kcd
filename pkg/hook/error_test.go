@@ -22,7 +22,7 @@ func hookErrorHandler(errorStruct *hookErrorStruct) error {
 	if errorStruct.Value < 1 {
 		return errors.
 			NewWithKind(errors.KindUnavailable, "value is unavailable").
-			WithMetadata("value", errorStruct.Value)
+			WithField("value", errorStruct.Value)
 	}
 
 	if errorStruct.Value == 50 {
@@ -46,7 +46,7 @@ func TestError(t *testing.T) {
 	t.Run("it should use query input error", func(t *testing.T) {
 		e.POST("/x").WithQuery("value", "ab").Expect().
 			Status(http.StatusBadRequest).
-			JSON().Path("$.fields.value").Equal("invalid syntax")
+			JSON().Path("$.fields.value").Equal("invalid integer")
 	})
 
 	t.Run("it should use expectedsh/errors", func(t *testing.T) {
