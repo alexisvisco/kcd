@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"reflect"
 	"runtime"
+
+	"github.com/expectedsh/kcd/internal/cache"
+	"github.com/expectedsh/kcd/internal/decoder"
 )
 
 type inputType int
@@ -35,37 +38,43 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	hv := reflect.ValueOf(h)
 
 	if hv.Kind() != reflect.Func {
-		panic(fmt.Sprintf("handler parameters must be a httpHandler, got %T", h))
+		panic(fmt.Sprintf("handler parameters must be a function, got %T", h))
 	}
 	ht := hv.Type()
 
-	fundName := runtime.FuncForPC(hv.Pointer()).Name()
+	funcName := runtime.FuncForPC(hv.Pointer()).Name()
 
-	orderInput, in := input(ht, fundName)
-	out := output(ht, fundName)
+	orderInput, in := input(ht, funcName)
+	out := output(ht, funcName)
 
-	var input *reflect.Value
+	cacheStruct := cache.NewStructAnalyzer(Config.stringsTags(), Config.valuesTags(), in).Cache()
+
+	var input reflect.Value
 
 	// Wrap http handler.
 	httpHandler := func(w http.ResponseWriter, r *http.Request) {
 		// kcd handler has custom input, handle binding.
+
 		if in != nil {
 			inputStruct := reflect.New(in)
-			input = &inputStruct
+			input = inputStruct
 
 			// Bind body
 			if err := Config.BindHook(w, r, input.Interface()); err != nil {
-				Config.ErrorHook(w, r, err)
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 
-			if err := newBinder(w, r, Config.StringsExtractors, Config.ValueExtractors).bind(inputStruct); err != nil {
-				Config.ErrorHook(w, r, err)
+			err := decoder.NewDecoder(r, w, Config.StringsExtractors, Config.ValueExtractors).
+				Decode(cacheStruct, input)
+
+			if err != nil {
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 
 			if err := Config.ValidateHook(r.Context(), inputStruct.Interface()); err != nil {
-				Config.ErrorHook(w, r, err)
+				Config.ErrorHook(w, r, err, Config.LogHook)
 				return
 			}
 		}
@@ -77,7 +86,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 		for _, t := range orderInput {
 			switch t {
 			case inputTypeInput:
-				args = append(args, *input)
+				args = append(args, input)
 			case inputTypeRequest:
 				args = append(args, reflect.ValueOf(r))
 			case inputTypeResponse:
@@ -95,13 +104,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 
 		// Handle the error returned by the handler invocation, if any.
 		if err != nil {
-			Config.ErrorHook(w, r, err.(error))
+			Config.ErrorHook(w, r, err.(error), Config.LogHook)
 			return
 		}
 
 		// Render the response.
 		if err := Config.RenderHook(w, r, outputStruct, defaultStatusCode); err != nil {
-			Config.ErrorHook(w, r, err)
+			Config.ErrorHook(w, r, err, Config.LogHook)
 			return
 		}
 	}

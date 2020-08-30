@@ -22,35 +22,35 @@ const (
 )
 
 type ExtractorTestStruct struct {
-	Str     string  `query:"str" path:"str" header:"str"`
-	Bool    bool    `query:"bool" path:"bool" header:"bool"`
-	Int     int     `query:"int" path:"int" header:"int"`
-	Int8    int8    `query:"int8" path:"int8" header:"int8"`
-	Int16   int16   `query:"int16" path:"int16" header:"int16"`
-	Int32   int32   `query:"int32" path:"int32" header:"int32"`
-	Int64   int64   `query:"int64" path:"int64" header:"int64"`
-	Uint    uint    `query:"uint" path:"uint" header:"uint"`
-	Uint8   uint8   `query:"uint8" path:"uint8" header:"uint8"`
-	Uint16  uint16  `query:"uint16" path:"uint16" header:"uint16"`
-	Uint32  uint32  `query:"uint32" path:"uint32" header:"uint32"`
-	Uint64  uint64  `query:"uint64" path:"uint64" header:"uint64"`
-	Float32 float32 `query:"float32" path:"float32" header:"float32"`
-	Float64 float64 `query:"float64" path:"float64" header:"float64"`
+	Str     string  `query:"str" ctx:"str"  path:"str" header:"str"`
+	Bool    bool    `query:"bool" ctx:"bool"  path:"bool" header:"bool"`
+	Int     int     `query:"int" ctx:"int"  path:"int" header:"int"`
+	Int8    int8    `query:"int8" ctx:"int8"  path:"int8" header:"int8"`
+	Int16   int16   `query:"int16" ctx:"int16"  path:"int16" header:"int16"`
+	Int32   int32   `query:"int32" ctx:"int32"  path:"int32" header:"int32"`
+	Int64   int64   `query:"int64" ctx:"int64"  path:"int64" header:"int64"`
+	Uint    uint    `query:"uint" ctx:"uint"  path:"uint" header:"uint"`
+	Uint8   uint8   `query:"uint8" ctx:"uint8"  path:"uint8" header:"uint8"`
+	Uint16  uint16  `query:"uint16" ctx:"uint16"  path:"uint16" header:"uint16"`
+	Uint32  uint32  `query:"uint32" ctx:"uint32"  path:"uint32" header:"uint32"`
+	Uint64  uint64  `query:"uint64" ctx:"uint64"  path:"uint64" header:"uint64"`
+	Float32 float32 `query:"float32" ctx:"float32"  path:"float32" header:"float32"`
+	Float64 float64 `query:"float64" ctx:"float64"  path:"float64" header:"float64"`
 
-	PtrStr     *string  `query:"ptr_str" path:"ptr_str" header:"ptr_str"`
-	PtrBool    *bool    `query:"ptr_bool" path:"ptr_bool" header:"ptr_bool"`
-	PtrInt     *int     `query:"ptr_int" path:"ptr_int" header:"ptr_int"`
-	PtrInt8    *int8    `query:"ptr_int8" path:"ptr_int8" header:"ptr_int8"`
-	PtrInt16   *int16   `query:"ptr_int16" path:"ptr_int16" header:"ptr_int16"`
-	PtrInt32   *int32   `query:"ptr_int32" path:"ptr_int32" header:"ptr_int32"`
-	PtrInt64   *int64   `query:"ptr_int64" path:"ptr_int64" header:"ptr_int64"`
-	PtrUint    *uint    `query:"ptr_uint" path:"ptr_uint" header:"ptr_uint"`
-	PtrUint8   *uint8   `query:"ptr_uint8" path:"ptr_uint8" header:"ptr_uint8"`
-	PtrUint16  *uint16  `query:"ptr_uint16" path:"ptr_uint16" header:"ptr_uint16"`
-	PtrUint32  *uint32  `query:"ptr_uint32" path:"ptr_uint32" header:"ptr_uint32"`
-	PtrUint64  *uint64  `query:"ptr_uint64" path:"ptr_uint64" header:"ptr_uint64"`
-	PtrFloat32 *float32 `query:"ptr_float32" path:"ptr_float32" header:"ptr_float32"`
-	PtrFloat64 *float64 `query:"ptr_float64" path:"ptr_float64" header:"ptr_float64"`
+	PtrStr     *string  `query:"ptr_str" ctx:"ptr_str"  path:"ptr_str" header:"ptr_str"`
+	PtrBool    *bool    `query:"ptr_bool" ctx:"ptr_bool"  path:"ptr_bool" header:"ptr_bool"`
+	PtrInt     *int     `query:"ptr_int" ctx:"ptr_int"  path:"ptr_int" header:"ptr_int"`
+	PtrInt8    *int8    `query:"ptr_int8" ctx:"ptr_int8"  path:"ptr_int8" header:"ptr_int8"`
+	PtrInt16   *int16   `query:"ptr_int16" ctx:"ptr_int16"  path:"ptr_int16" header:"ptr_int16"`
+	PtrInt32   *int32   `query:"ptr_int32" ctx:"ptr_int32"  path:"ptr_int32" header:"ptr_int32"`
+	PtrInt64   *int64   `query:"ptr_int64" ctx:"ptr_int64"  path:"ptr_int64" header:"ptr_int64"`
+	PtrUint    *uint    `query:"ptr_uint" ctx:"ptr_uint"  path:"ptr_uint" header:"ptr_uint"`
+	PtrUint8   *uint8   `query:"ptr_uint8" ctx:"ptr_uint8"  path:"ptr_uint8" header:"ptr_uint8"`
+	PtrUint16  *uint16  `query:"ptr_uint16" ctx:"ptr_uint16"  path:"ptr_uint16" header:"ptr_uint16"`
+	PtrUint32  *uint32  `query:"ptr_uint32" ctx:"ptr_uint32"  path:"ptr_uint32" header:"ptr_uint32"`
+	PtrUint64  *uint64  `query:"ptr_uint64" ctx:"ptr_uint64"  path:"ptr_uint64" header:"ptr_uint64"`
+	PtrFloat32 *float32 `query:"ptr_float32" ctx:"ptr_float32"  path:"ptr_float32" header:"ptr_float32"`
+	PtrFloat64 *float64 `query:"ptr_float64" ctx:"ptr_float64"  path:"ptr_float64" header:"ptr_float64"`
 
 	ArrStr     []string  `query:"arr_str" path:"arr_str" header:"arr_str"`
 	ArrBool    []bool    `query:"arr_bool" path:"arr_bool" header:"arr_bool"`

@@ -37,7 +37,7 @@ func TestBind(t *testing.T) {
 	t.Run("it should fail because of invalid body", func(t *testing.T) {
 		e.POST("/").WithBytes([]byte("{ this is a malformed json")).Expect().
 			Status(http.StatusBadRequest).
-			JSON().Path("$.error_description").Equal("unable to unmarshal request")
+			JSON().Path("$.error_description").Equal("unable to read json request")
 	})
 
 	t.Run("it should succeed with an empty body", func(t *testing.T) {
