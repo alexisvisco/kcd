@@ -120,7 +120,7 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
-		case types.IsImplementingUnmarshaller(f.metadata.Type):
+		case types.IsImplementingUnmarshaler(f.metadata.Type):
 			withUnmarshaller, err := f.makeWithUnmarshaller(val)
 			if err != nil {
 				return err.WithField("value-index", i)
@@ -169,7 +169,7 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(native)
-	case types.IsImplementingUnmarshaller(f.metadata.Type):
+	case types.IsImplementingUnmarshaler(f.metadata.Type):
 		withUnmarshaller, err := f.makeWithUnmarshaller(str)
 		if err != nil {
 			return err
@@ -265,7 +265,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		el = reflect.New(f.metadata.Type)
 	}
 
-	if el.Type().Implements(types.UnmarshallerText) {
+	if el.Type().Implements(types.UnmarshalerText) {
 		t := el.Interface().(encoding.TextUnmarshaler)
 
 		err := t.UnmarshalText([]byte(str))
@@ -278,7 +278,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		return el, nil
 	}
 
-	if el.Type().Implements(types.JSONUnmarshaller) {
+	if el.Type().Implements(types.JSONUnmarshaler) {
 		t := el.Interface().(json.Unmarshaler)
 		err := t.UnmarshalJSON([]byte(str))
 		if err != nil {
@@ -290,7 +290,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		return el, nil
 	}
 
-	if el.Type().Implements(types.BinaryUnmarshaller) {
+	if el.Type().Implements(types.BinaryUnmarshaler) {
 		t := el.Interface().(encoding.BinaryUnmarshaler)
 		err := t.UnmarshalBinary([]byte(str))
 		if err != nil {

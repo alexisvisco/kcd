@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Log will log the error.
 func Log(_ http.ResponseWriter, r *http.Request, err error) {
 	var logger *logrus.Entry
 

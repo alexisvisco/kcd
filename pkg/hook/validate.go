@@ -8,7 +8,7 @@ import (
 
 // Validate is the default validation hook.
 // It use 'ozzo-validation' to validate structure.
-// A structure must implement 'ValidatableWithContext' or 'Validatable'
+// A structure must implement 'ValidatableWithContext' or 'Validatable'.
 func Validate(ctx context.Context, input interface{}) error {
 	switch v := input.(type) {
 	case validation.ValidatableWithContext:

@@ -5,7 +5,7 @@ import (
 	"github.com/expectedsh/kcd/pkg/hook"
 )
 
-// Configuration is the main configuration type of kcd
+// Configuration is the main configuration type of kcd.
 type Configuration struct {
 	StringsExtractors []extractor.Strings
 	ValueExtractors   []extractor.Value

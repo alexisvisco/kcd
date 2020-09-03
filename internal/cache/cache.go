@@ -7,12 +7,23 @@ import (
 	"github.com/expectedsh/kcd/internal/types"
 )
 
+// StructAnalyzer is the cache struct analyzer
 type StructAnalyzer struct {
 	tags           []string
 	valueTag       []string
 	mainStructType reflect.Type
 }
 
+// NewStructAnalyzer instantiate a new StructAnalyzer
+func NewStructAnalyzer(stringsTags, valueTags []string, mainStructType reflect.Type) *StructAnalyzer {
+	return &StructAnalyzer{
+		tags:           append(stringsTags, valueTags...),
+		valueTag:       valueTags,
+		mainStructType: mainStructType,
+	}
+}
+
+// StructCache
 type StructCache struct {
 	IsRoot     bool
 	Index      []int
@@ -21,11 +32,13 @@ type StructCache struct {
 	Child []StructCache
 }
 
+// String is a way to debug StructCache
 func (s StructCache) String() string {
 	marshal, _ := json.MarshalIndent(s, "", " ")
 	return string(marshal)
 }
 
+// FieldMetadata contains all the necessary field to decode
 type FieldMetadata struct {
 	Index                 []int
 	Paths                 TagsPath
@@ -36,14 +49,7 @@ type FieldMetadata struct {
 	Exploder              string
 }
 
-func NewStructAnalyzer(stringsTags, valueTags []string, mainStructType reflect.Type) *StructAnalyzer {
-	return &StructAnalyzer{
-		tags:           append(stringsTags, valueTags...),
-		valueTag:       valueTags,
-		mainStructType: mainStructType,
-	}
-}
-
+// Cache will take all fields which contain a tag to be lookup.
 func (s StructAnalyzer) Cache() StructCache {
 	sc := newStructCache()
 
@@ -67,7 +73,7 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 			metadata    = FieldMetadata{Index: structField.Index, Type: structField.Type}
 		)
 
-		if types.IsImplementingUnmarshaller(metadata.Type) {
+		if types.IsImplementingUnmarshaler(metadata.Type) {
 			metadata.ImplementUnmarshaller = true
 		}
 

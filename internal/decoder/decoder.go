@@ -9,6 +9,7 @@ import (
 	"github.com/expectedsh/kcd/pkg/extractor"
 )
 
+// Decoder is the http decoder system for KCD.
 type Decoder struct {
 	req *http.Request
 	res http.ResponseWriter
@@ -17,6 +18,7 @@ type Decoder struct {
 	valueExtractors   []extractor.Value
 }
 
+// NewDecoder create a new Decoder.
 func NewDecoder(
 	req *http.Request,
 	res http.ResponseWriter,
@@ -57,6 +59,8 @@ func (d previousFields) getCurrentReflectValue() reflect.Value {
 	return field
 }
 
+// Decode will from cache struct and a root value decode the http request/response
+// and set all extracted values inside the root parameter.
 func (d Decoder) Decode(c cache.StructCache, root reflect.Value) error {
 	return d.decode(c, root.Type(), previousFields{root: root})
 }
