@@ -22,12 +22,24 @@ const (
 //
 // The handler may use the following signature:
 //
-//  func([response http.ResponseWriter], [request *http.Request], [input object ptr]) ([output object], error)
+//  func([response http.ResponseWriter], [request *http.Request], [INPUT object ptr]) ([OUTPUT object], error)
 //
-// InputError and output objects are both optional.
+// INPUT and OUTPUT objects are both optional.
 // As such, the minimal accepted signature is:
 //
 //  func() error
+//
+// A complete example for an INPUT object:
+//  type CreateCustomerInput struct {
+//		Name          string            `path:"name"`                 // /some-path/{name}
+//		Authorization string            `header:"X-authorization"`    // header name 'X-authorization'
+//		Emails        []string          `query:"emails" exploder:","` // /some-path/{name}?emails=a@1.fr,b@1.fr
+//      Body          map[string]string `json:"body"`                 // json body with {body: {a: "hey", b: "hoy"}}
+//
+//		ContextualID *struct {
+//			ID string `ctx:"id" default:"robot"` // ctx value with key 'id' or it will default set ID to "robot"
+//		}
+//	}
 //
 // The wrapped handler will bind the parameters from the query-string,
 // path, body and headers, context, and handle the errors.

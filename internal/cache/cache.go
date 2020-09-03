@@ -49,6 +49,15 @@ type FieldMetadata struct {
 	Exploder              string
 }
 
+func (f FieldMetadata) GetDefaultFieldName() string {
+	for tag, path := range f.Paths {
+		if tag != "default" {
+			return path
+		}
+	}
+	return "unknown"
+}
+
 // Cache will take all fields which contain a tag to be lookup.
 func (s StructAnalyzer) Cache() StructCache {
 	sc := newStructCache()

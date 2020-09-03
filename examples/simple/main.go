@@ -12,16 +12,24 @@ import (
 	"github.com/expectedsh/kcd"
 )
 
+const idContext = "id"
+
 func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 
-	// kcd.Config.ErrorHook ...
+	// You can configure kcd with kcd.Config.{ ErrorHook,
+	//                                         RenderHook,
+	//                                         BindHook,
+	//                                         ValidateHook,
+	//                                         LogHook,
+	//                                         StringsExtractors,
+	//                                         ValueExtractors }
 
 	r.Use(func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, "id", 12345)
+			ctx = context.WithValue(ctx, idContext, 12345)
 			handler.ServeHTTP(w, r)
 		})
 	})
@@ -35,7 +43,7 @@ type CreateCustomerInput struct {
 	Name         string   `path:"name"`
 	Emails       []string `query:"emails" exploder:","`
 	ContextualID *struct {
-		ID int `ctx:"id"`
+		ID int `ctx:"id" default:"12345"`
 	}
 }
 

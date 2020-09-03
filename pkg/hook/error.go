@@ -57,8 +57,9 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 
 			tag, _ := e.GetField("tag")
 			path, _ := e.GetField("path")
+
 			switch tag {
-			case "query", "path", "header", "ctx":
+			case "query", "path", "header", "ctx", "default":
 				response.Fields[path.(string)] = e.Message
 			case "json":
 				response.ErrorDescription = e.Message

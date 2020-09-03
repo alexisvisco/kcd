@@ -181,11 +181,11 @@ func (d Decoder) getValueFromHTTP(r cache.FieldMetadata) (tag, key string, val i
 		if len(r.Exploder) > 0 && r.ArrayOrSlice {
 			list := strings.Split(def, r.Exploder)
 			if len(list) > 1 {
-				return "default", "", list, nil
+				return "default", r.GetDefaultFieldName(), list, nil
 			}
 		}
 
-		return "default", "", def, nil
+		return "default", r.GetDefaultFieldName(), def, nil
 	}
 
 	return "", "", nil, nil
