@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/expectedsh/errors"
+	validation "github.com/expectedsh/ozzo-validation/v4"
 	"github.com/go-chi/chi/middleware"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 
 	"github.com/expectedsh/kcd/internal/kcderr"
 )

@@ -24,12 +24,12 @@ const (
 //
 //  func([response http.ResponseWriter], [request *http.Request], [INPUT object ptr]) ([OUTPUT object], error)
 //
-// INPUT and OUTPUT objects are both optional.
+// INPUT and OUTPUT struct are both optional.
 // As such, the minimal accepted signature is:
 //
 //  func() error
 //
-// A complete example for an INPUT object:
+// A complete example for an INPUT struct:
 //  type CreateCustomerInput struct {
 //		Name          string            `path:"name"`                 // /some-path/{name}
 //		Authorization string            `header:"X-authorization"`    // header name 'X-authorization'
