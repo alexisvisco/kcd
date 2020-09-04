@@ -70,7 +70,7 @@ func YourHttpHandler(in *CreateCustomerInput) (CustomerOutput, error) {
 
 You can test this code by using curl `curl localhost:3000/supername?emails=alexis@gmail.com,remi@gmail.com`
 
-## :check: Validation
+## :heavy_check_mark: Validation
 
 KCD can validate your input by using a fork of [ozzo-validation](https://github.com/expectedsh/ozzo-validation).
 
