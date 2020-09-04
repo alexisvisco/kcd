@@ -14,33 +14,77 @@
 
 ## :stars: KCD 
 
-KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. It manage all you want for building REST services.
+KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. 
+It manages all you want for building REST services.
 
-This library is **opinionated** by default but **fully customizable** which mean it uses some other libraries like Chi for instance. KCD is modular so each pieces of the code that rely on a specific library can be changed. 
+This library is **opinionated** by default but **customizable** which mean it uses some other libraries like Chi, Logrus...
+KCD is modular so each pieces of the code that rely on a specific library can be changed. 
 
-## :rocket: What KCD does exactly 
+## :rocket: QuickStart
 
-Okay so KCD will wrap your cool handler into a http handler. The magic happen with this function:
-
-`kcd.Handler(YourShinyHandler,  http.StatusOK)` (which returns a http.HandlerFunc)
-
-Your handler is the `YourShinyHandler` parameter, it accepts: 
 ```go
-func([response http.ResponseWriter], [request *http.Request], [input object ptr]) ([output object], error)
+package main
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+
+	"github.com/expectedsh/kcd"
+)
+
+func main() {
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+
+	// You can configure kcd with kcd.Config
+
+	r.Get("/{name}", kcd.Handler(YourHttpHandler, http.StatusOK))
+	//                       ^ Here the magic happen this is the only thing you need
+	//                         to do. Adding kcd.Handler(your handler)
+	_ = http.ListenAndServe(":3000", r)
+}
+
+// CreateCustomerInput is an example of input for an http request.
+type CreateCustomerInput struct {
+	Name    string   `path:"name"`                 // you can extract value from: 'path', 'query', 'header', 'ctx'
+	Emails  []string `query:"emails" exploder:","` // exploder split value with the char specified
+}
+
+// CustomerOutput is the output type of your handler it contain the input for simplicity.
+type CustomerOutput struct {
+	Name string `json:"name"`
+}
+
+// YourHttpHandler is your http handler but in a shiny version.
+// You can add *http.ResponseWriter or http.Request in params if you want.
+func YourHttpHandler(in *CreateCustomerInput) (CustomerOutput, error) {
+	// do some stuff here
+	fmt.Printf("%+v", in)
+
+	return CustomerOutput{Name: in.Name}, nil
+}
 ```
- 
-The only parameter in your shiny handler that is required is the returned error. 
 
-**If there are any errors at some point KCD will call the [error hook](pkg/hook/error.go) to provide a REST generic error**.
+You can test this code by using curl `curl localhost:3000/supername?emails=alexis@gmail.com,remi@gmail.com`
 
-1. If there is a custom input parameter (a pointer to a structure) it will:
-    1. Run all [extractors](pkg/extractor) to extract values from the request into the input (query parameters, path, header, default value ...)
-    2. Run the JSON body [bind hook](pkg/hook/bind.go)
-    3. Validate the input through the [validate hook](pkg/hook/validate.go)
-3. If all is good it will then call your shiny handler with all required arguments
-4. Then if there is an output parameter it will call the [render hook](pkg/hook/render.go)
+## :check: Validation
 
-That's all. Well that's it, that's all you should have done if you didn't have KCD. 
+KCD can validate your input by using a fork of [ozzo-validation](https://github.com/expectedsh/ozzo-validation).
+
+Your input need to implement Validatable or ValidatableWithContext.
+
+```go
+// Validate is the function that will be called before calling your shiny handler.
+func (c CreateCustomerInput) Validate() error {
+	return validation.ValidateStruct(&c,
+		validation.Field(&c.Name, validation.Required, validation.Length(5, 20)),
+		validation.Field(&c.Emails, validation.Each(is.Email)),
+	)
+}
+```
 
 ## :coffee: Benefits
 
