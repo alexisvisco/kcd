@@ -49,9 +49,9 @@ func main() {
 
 // CreateCustomerInput is an example of input for an http request.
 type CreateCustomerInput struct {
-	Name    string   `path:"name"`                 // you can extract value from: 'path', 'query', 'header', 'ctx'
-	Emails  []string `query:"emails" exploder:","` // exploder split value with the characters specified
-    Subject string   `json:"body"`                 // it also works with json body
+	Name     string   `path:"name"`                 // you can extract value from: 'path', 'query', 'header', 'ctx'
+	Emails   []string `query:"emails" exploder:","` // exploder split value with the characters specified
+    Subject  string   `json:"body"`                 // it also works with json body
 }
 
 // CustomerOutput is the output type of the http request.
