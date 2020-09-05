@@ -50,21 +50,22 @@ func main() {
 // CreateCustomerInput is an example of input for an http request.
 type CreateCustomerInput struct {
 	Name    string   `path:"name"`                 // you can extract value from: 'path', 'query', 'header', 'ctx'
-	Emails  []string `query:"emails" exploder:","` // exploder split value with the char specified
+	Emails  []string `query:"emails" exploder:","` // exploder split value with the characters specified
+    Subject string   `json:"body"`                 // it also works with json body
 }
 
-// CustomerOutput is the output type of your handler it contain the input for simplicity.
-type CustomerOutput struct {
+// CustomerOutput is the output type of the http request.
+type CreateCustomerOutput struct {
 	Name string `json:"name"`
 }
 
 // YourHttpHandler is your http handler but in a shiny version.
 // You can add *http.ResponseWriter or http.Request in params if you want.
-func YourHttpHandler(in *CreateCustomerInput) (CustomerOutput, error) {
+func YourHttpHandler(in *CreateCustomerInput) (CreateCustomerOutput, error) {
 	// do some stuff here
 	fmt.Printf("%+v", in)
 
-	return CustomerOutput{Name: in.Name}, nil
+	return CreateCustomerOutput{Name: in.Name}, nil
 }
 ```
 
@@ -83,6 +84,27 @@ func (c CreateCustomerInput) Validate() error {
 		validation.Field(&c.Name, validation.Required, validation.Length(5, 20)),
 		validation.Field(&c.Emails, validation.Each(is.Email)),
 	)
+}
+```
+
+## :x: Error handling
+
+KCD handle these kinds of errors: parsing input, validating input and custom handler error.
+
+It uses our internal error package: [errors](https://github.com/expectedsh/errors)
+
+Example of error with a validation failure:
+
+```json
+{
+  "error_description": "the request has one or multiple invalid fields",
+  "error": "invalid_argument",
+  "fields": {
+    "name": "the length must be between 5 and 20"
+  },
+  "metadata": {
+    "request_id": "BJSIWMOS4o-000001"
+  }
 }
 ```
 
