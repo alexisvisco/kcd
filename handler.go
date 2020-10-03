@@ -1,6 +1,7 @@
 package kcd
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -16,6 +17,7 @@ const (
 	inputTypeResponse inputType = iota
 	inputTypeRequest
 	inputTypeInput
+	inputTypeCtx
 )
 
 // Handler returns a default http handler.
@@ -103,6 +105,8 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 				args = append(args, reflect.ValueOf(r))
 			case inputTypeResponse:
 				args = append(args, reflect.ValueOf(w))
+			case inputTypeCtx:
+				args = append(args, reflect.ValueOf(r.Context()))
 			}
 		}
 
@@ -131,15 +135,16 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 }
 
 var interfaceResponseWriter = reflect.TypeOf((*http.ResponseWriter)(nil)).Elem()
+var interfaceCtx = reflect.TypeOf((*context.Context)(nil)).Elem()
 
 // input checks the input parameters of a kcd handler
 // and return the type of the second parameter, if any.
 func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectType reflect.Type) {
 	n := ht.NumIn()
 
-	if n > 3 {
+	if n > 4 {
 		panic(fmt.Sprintf(
-			"incorrect number of input parameters for handler %s, expected 0 or 3, got %d",
+			"incorrect number of input parameters for handler %s, expected 0 to 4, got %d",
 			name, n,
 		))
 	}
@@ -161,6 +166,16 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 
 			setInputType[inputTypeResponse] = true
 			orderedInputType = append(orderedInputType, inputTypeResponse)
+		case currentInput.Implements(interfaceCtx):
+			if _, exist := setInputType[inputTypeCtx]; exist {
+				panic(fmt.Sprintf(
+					"invalid parameter %d at handler %s: there is already a context.Context parameter",
+					i, name,
+				))
+			}
+
+			setInputType[inputTypeCtx] = true
+			orderedInputType = append(orderedInputType, inputTypeCtx)
 		case currentInput.ConvertibleTo(reflect.TypeOf(&http.Request{})):
 			if _, exist := setInputType[inputTypeRequest]; exist {
 				panic(fmt.Sprintf(
