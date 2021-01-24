@@ -16,8 +16,7 @@ func Log(_ http.ResponseWriter, r *http.Request, err error) {
 	e, ok := err.(*errors.Error)
 	if ok {
 		if logrus.GetLevel() <= logrus.DebugLevel {
-			fmt.Println()
-			fmt.Println(e.FormatStacktrace())
+			fmt.Println("\n" + e.FormatStacktrace())
 		}
 		logger = e.Log()
 	} else {

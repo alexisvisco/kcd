@@ -22,6 +22,7 @@ type ErrorResponse struct {
 
 // Error is the default error hook.
 // It check the error and return the corresponding response to the client.
+// logger parameter is optional (you can set it to nil)
 func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 	response := ErrorResponse{
 		ErrorDescription: "internal server error",
@@ -73,7 +74,9 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 			response.Error = e.Kind
 			response.ErrorDescription = e.Message
 
-			logger(w, r, e)
+			if logger != nil {
+				logger(w, r, e)
+			}
 
 			break
 		}
@@ -83,7 +86,9 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 			response.Error = e.Kind
 			response.ErrorDescription = e.Message
 
-			logger(w, r, e)
+			if logger != nil {
+				logger(w, r, e)
+			}
 
 			break
 		}
@@ -94,13 +99,17 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 		response.Error = e.Kind
 
 		if e.Kind.ToStatusCode() >= 500 {
-			logger(w, r, e)
+			if logger != nil {
+				logger(w, r, e)
+			}
 		}
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 		response.Error = errors.KindInternal
 
-		logger(w, r, e)
+		if logger != nil {
+			logger(w, r, e)
+		}
 	}
 
 	marshal, err := json.Marshal(response)

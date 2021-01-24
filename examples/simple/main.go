@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/expectedsh/errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 
@@ -46,5 +47,5 @@ func YourHttpHandler(in *CreateCustomerInput) (CustomerOutput, error) {
 
 	fmt.Printf("%+v", in)
 
-	return CustomerOutput{Name: in.Name}, nil
+	return CustomerOutput{}, errors.NewWithKind(errors.KindInternal, "c'est fini !")
 }
