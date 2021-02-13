@@ -20,6 +20,20 @@ It manages all you want for building REST services.
 This library is **opinionated** by default but **customizable** which mean it uses some other libraries like Chi, Logrus...
 KCD is modular so each pieces of the code that rely on a specific library can be changed. 
 
+## :muscle: Example
+
+- [*Demo simple*](examples/demo/main.go)
+- [*Bind query parameters*](examples/input-from-query-parameter/main.go)
+- [*Bind path parameters*](examples/input-from-path-parameter/main.go)
+- [*Bind json body*](examples/input-from-json-body/main.go)
+- [*Bind context value*](examples/input-from-ctx/main.go)
+- [*Set default value*](examples/input-with-default-value/main.go)
+- [*Split string with exploder tag*](examples/input-with-exploder/main.go)
+- [*Nested struct*](examples/input-with-nested-struct/main.go)
+- [*Validation*](examples/demo-validation)
+- [*Errors*](examples/demo-errors)
+- [*Real world example: pagination*](examples/demo-ordered-pagination)
+
 ## :rocket: QuickStart
 
 ```go
@@ -69,45 +83,6 @@ func YourHttpHandler(in *CreateCustomerInput) (CreateCustomerOutput, error) {
 }
 ```
 
-You can test this code by using curl `curl localhost:3000/supername?emails=alexis@gmail.com,remi@gmail.com`
-
-## :heavy_check_mark: Validation
-
-KCD can validate your input by using a fork of [ozzo-validation](https://github.com/expectedsh/ozzo-validation).
-
-Your input need to implement Validatable or ValidatableWithContext.
-
-```go
-// Validate is the function that will be called before calling your shiny handler.
-func (c CreateCustomerInput) Validate() error {
-	return validation.ValidateStruct(&c,
-		validation.Field(&c.Name, validation.Required, validation.Length(5, 20)),
-		validation.Field(&c.Emails, validation.Each(is.Email)),
-	)
-}
-```
-
-## :x: Error handling
-
-KCD handle these kinds of errors: parsing input, validating input and custom handler error.
-
-It uses our internal error package: [errors](https://github.com/expectedsh/errors)
-
-Example of error with a validation failure:
-
-```json
-{
-  "error_description": "the request has one or multiple invalid fields",
-  "error": "invalid_argument",
-  "fields": {
-    "name": "the length must be between 5 and 20"
-  },
-  "metadata": {
-    "request_id": "BJSIWMOS4o-000001"
-  }
-}
-```
-
 ## :coffee: Benefits
 
 - More readable code
@@ -115,7 +90,5 @@ Example of error with a validation failure:
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
 
-## :muscle: Example
 
-- [*examples/simple/main.go*](./examples/simple/main.go)
 

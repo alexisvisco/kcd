@@ -12,6 +12,8 @@ github.com/expectedsh/errors v0.0.0-20200830122803-56db442d28c1 h1:oeIUiostM+0Ak
 github.com/expectedsh/errors v0.0.0-20200830122803-56db442d28c1/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
 github.com/expectedsh/errors v0.0.0-20210124202736-d5b8c18d3d49 h1:dgipa5pIOIo9PyvcbRDLdpkQ6Jh8l+jMYskdI60eqP4=
 github.com/expectedsh/errors v0.0.0-20210124202736-d5b8c18d3d49/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
+github.com/expectedsh/errors v0.0.0-20210202114355-1ef1be695088 h1:ppbeCXcvIuSPbu7cmuFK24SrZ4dH7kuZsoxpFM2afSs=
+github.com/expectedsh/errors v0.0.0-20210202114355-1ef1be695088/go.mod h1:ubTMChJpHclq0h2n4MiR1a9YFVKASaMuS9qSm32d0Tc=
 github.com/expectedsh/ozzo-validation/v4 v4.2.4 h1:cka7DVwIbhk6gv1hLdQ/susq4deDpkj6Qu1U5fyeZo8=
 github.com/expectedsh/ozzo-validation/v4 v4.2.4/go.mod h1:rysyCkojFnFkRX3fgBKvhrj84JazvRM/PDaP+h8OLPM=
 github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 h1:DddqAaWDpywytcG8w/qoQ5sAN8X12d3Z3koB0C3Rxsc=
