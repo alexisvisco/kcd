@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"runtime"
 
+	"github.com/expectedsh/errors"
+
 	"github.com/expectedsh/kcd/internal/cache"
 	"github.com/expectedsh/kcd/internal/decoder"
 )
@@ -19,6 +21,8 @@ const (
 	inputTypeInput
 	inputTypeCtx
 )
+
+var ErrStopHandler = errors.New("KCD_STOP_HANDLER")
 
 // Handler returns a default http handler.
 //
@@ -116,6 +120,11 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 			err = ret[1].Interface()
 		} else {
 			err = ret[0].Interface()
+		}
+
+		// the handler must stop because its a special error
+		if err == ErrStopHandler {
+			return
 		}
 
 		// Handle the error returned by the handler invocation, if any.
