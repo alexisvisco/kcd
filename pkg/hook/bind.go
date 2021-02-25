@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/expectedsh/errors"
 
@@ -14,20 +15,23 @@ import (
 // the input interface with the json encoding of the stdlib.
 func Bind(maxBodyBytes int64) BindHook {
 	return func(w http.ResponseWriter, r *http.Request, in interface{}) error {
-		if r.ContentLength == 0 {
-			return nil
-		}
-		r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
+		if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
 
-		bytesBody, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			return errors.Wrap(err, "unable to read body").WithKind(kcderr.InputCritical)
-		}
+			if r.ContentLength == 0 {
+				return nil
+			}
+			r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
-		if err := json.Unmarshal(bytesBody, in); err != nil {
-			return errors.Wrap(err, "unable to read json request").
-				WithKind(kcderr.Input).
-				WithField("tag", "json")
+			bytesBody, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				return errors.Wrap(err, "unable to read body").WithKind(kcderr.InputCritical)
+			}
+
+			if err := json.Unmarshal(bytesBody, in); err != nil {
+				return errors.Wrap(err, "unable to read json request").
+					WithKind(kcderr.Input).
+					WithField("tag", "json")
+			}
 		}
 
 		return nil
