@@ -69,17 +69,17 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	fieldsToSet := make([]setterContext, 0, len(c.Resolvable))
 
 	for _, metadata := range c.Resolvable {
-		tag, path, v, err := d.getValueFromHTTP(metadata)
+		decodingStrategy, path, v, err := d.getValueFromHTTP(metadata)
 		if err != nil {
 			return err
 		}
 
 		if v != nil {
 			fieldsToSet = append(fieldsToSet, setterContext{
-				tag:      tag,
-				path:     path,
-				metadata: metadata,
-				value:    v,
+				decodingStrategy: decodingStrategy,
+				path:             path,
+				metadata:         metadata,
+				value:            v,
 			})
 		}
 	}
@@ -131,7 +131,7 @@ func (d Decoder) decode(c cache.StructCache, root reflect.Type, prev previousFie
 	return nil
 }
 
-func (d Decoder) getValueFromHTTP(r cache.FieldMetadata) (tag, key string, val interface{}, err error) {
+func (d Decoder) getValueFromHTTP(r cache.FieldMetadata) (decodingStrategy, key string, val interface{}, err error) {
 	for _, e := range d.stringsExtractors {
 		path, ok := r.Paths[e.Tag()]
 		if ok {

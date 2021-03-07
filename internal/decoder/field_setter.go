@@ -16,9 +16,9 @@ import (
 )
 
 type setterContext struct {
-	metadata  cache.FieldMetadata
-	path, tag string
-	value     interface{} // value is either []string or interface{}
+	metadata               cache.FieldMetadata
+	path, decodingStrategy string
+	value                  interface{} // value is either []string or interface{}
 }
 
 type fieldSetter struct {
@@ -32,11 +32,11 @@ func newFieldSetter(field reflect.Value, setterCtx setterContext) *fieldSetter {
 	fs := &fieldSetter{field: field, value: setterCtx.value, metadata: setterCtx.metadata}
 
 	fs.errFields = map[string]interface{}{
-		"value":      fmt.Sprint(setterCtx.value),
-		"value-type": reflect.TypeOf(setterCtx.value).String(),
-		"field-type": field.Type().String(),
-		"path":       setterCtx.path,
-		"tag":        setterCtx.tag,
+		"value":             fmt.Sprint(setterCtx.value),
+		"value-type":        reflect.TypeOf(setterCtx.value).String(),
+		"field-type":        field.Type().String(),
+		"path":              setterCtx.path,
+		"decoding-strategy": setterCtx.decodingStrategy,
 	}
 
 	return fs

@@ -30,7 +30,7 @@ func Bind(maxBodyBytes int64) BindHook {
 			if err := json.Unmarshal(bytesBody, in); err != nil {
 				return errors.Wrap(err, "unable to read json request").
 					WithKind(kcderr.Input).
-					WithField("tag", "json")
+					WithField("decoding-strategy", "json")
 			}
 		}
 
