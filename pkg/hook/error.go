@@ -100,12 +100,12 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 		response.ErrorDescription = e.Message
 		response.Error = e.Kind
 
-		if e.Kind.ToStatusCode() >= ErrorHookStatusCodeMinLogged {
+		if e.Kind.ToStatusCode() == 500 {
 			// ensure there is an error internal if the status code is ErrorHookStatusCodeMinLogged (for instance when omission of the kind)
 			response.Error = errors.KindInternal
 		}
 
-		if e.Kind.ToStatusCode() >= 500 {
+		if e.Kind.ToStatusCode() >= ErrorHookStatusCodeMinLogged {
 			if logger != nil {
 				logger(w, r, e)
 			}

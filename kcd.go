@@ -31,8 +31,6 @@ var Config = Configuration{
 	BindHook:     hook.Bind(256 * 1024),
 	ValidateHook: hook.Validate,
 	LogHook:      hook.Log,
-
-	Verbose: false,
 }
 
 func (c Configuration) stringsTags() []string {
