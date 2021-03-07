@@ -11,6 +11,8 @@ import (
 	"github.com/expectedsh/kcd/internal/kcderr"
 )
 
+var ErrorHookStatusCodeMinLogged = 500
+
 // ErrorResponse is the default response that send the default error hook.
 type ErrorResponse struct {
 	ErrorDescription string      `json:"error_description"`
@@ -98,8 +100,8 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 		response.ErrorDescription = e.Message
 		response.Error = e.Kind
 
-		if e.Kind.ToStatusCode() == 500 {
-			// ensure there is an error internal if the status code is 500 (for instance when omission of the kind)
+		if e.Kind.ToStatusCode() >= ErrorHookStatusCodeMinLogged {
+			// ensure there is an error internal if the status code is ErrorHookStatusCodeMinLogged (for instance when omission of the kind)
 			response.Error = errors.KindInternal
 		}
 
