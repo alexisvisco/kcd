@@ -62,6 +62,8 @@ type hookBindStruct struct {
 	SlicePtrString []*string `query:"slice_ptr_string"`
 
 	SliceInt []int `query:"slice_int"`
+
+	SliceWithUnmarshal *SliceWithUnmarshal `query:"slice_with_unmarshal"`
 }
 
 type Embedded struct {
@@ -117,6 +119,20 @@ func (s *StructWithBinaryUnmarshaller) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
+type SliceWithUnmarshal [2]byte
+
+func (s *SliceWithUnmarshal) UnmarshalText(text []byte) error {
+	if len(text) >= 2 {
+		s[0] = text[0]
+		s[1] = text[1]
+	} else {
+		s[0] = 'a'
+		s[1] = 'b'
+	}
+
+	return nil
+}
+
 func TestBind(t *testing.T) {
 	r := chi.NewRouter()
 	r.Post("/{uint}", kcd.Handler(hookBindHandler, 200))
@@ -157,6 +173,7 @@ func TestBind(t *testing.T) {
 			WithQuery("slice_ptr_string", `hey`).
 			WithQuery("slice_ptr_string", `how`).
 			WithQuery("slice_int", 0).
+			WithQuery("slice_with_unmarshal", "hg").
 			Expect()
 
 		raw := expect.Body().Raw()
@@ -191,6 +208,7 @@ func TestBind(t *testing.T) {
 		j.Path("$.StructWithBinaryUnmarshaller.Value").Equal(`goijerierjoer`)
 		j.Path("$.SlicePtrString").Equal([]string{"hey", "how"})
 		j.Path("$.SliceInt").Equal([]int{0})
+		j.Path("$.SliceWithUnmarshal").Equal(SliceWithUnmarshal{'h', 'g'})
 	})
 
 	t.Run("it should fail because of invalid body", func(t *testing.T) {

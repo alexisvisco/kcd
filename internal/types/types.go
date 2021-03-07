@@ -15,10 +15,10 @@ var Unmarshalers = []reflect.Type{
 }
 
 var (
-	// UnmarshalerText is the type of TextUnmarshaler
-	UnmarshalerText = Unmarshalers[0]
+	// TextUnmarshaller is the type of encoding.TextUnmarshaler
+	TextUnmarshaller = Unmarshalers[0]
 
-	// BinaryUnmarshaler is the type of BinaryUnmarshaler
+	// BinaryUnmarshaler is the type of encoding.BinaryUnmarshaler
 	BinaryUnmarshaler = Unmarshalers[1]
 
 	// JSONUnmarshaler is the type of json.Unmarshaler

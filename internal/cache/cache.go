@@ -115,7 +115,7 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 			}
 		}
 
-		if metadata.Type.Kind() == reflect.Slice || metadata.Type.Kind() == reflect.Array {
+		if !metadata.ImplementUnmarshaller && (metadata.Type.Kind() == reflect.Slice || metadata.Type.Kind() == reflect.Array) {
 			typeOfArray := metadata.Type.Elem()
 			if !sanitizePtrType(&typeOfArray) {
 				continue

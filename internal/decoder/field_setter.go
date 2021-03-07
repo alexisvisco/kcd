@@ -65,7 +65,7 @@ func (f fieldSetter) set() error {
 
 	isPtr := f.field.Kind() == reflect.Ptr
 
-	if f.metadata.ArrayOrSlice {
+	if f.metadata.ArrayOrSlice && !f.metadata.ImplementUnmarshaller {
 		return f.setForArrayOrSlice(isPtr, list)
 	}
 
@@ -113,6 +113,7 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
+			break
 		case types.IsImplementingUnmarshaler(f.metadata.Type):
 			withUnmarshaller, err := f.makeWithUnmarshaller(val)
 			if err != nil {
@@ -120,6 +121,7 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, withUnmarshaller)
+			break
 		case types.IsNative(f.metadata.Type):
 			native, err := f.makeNative(val, isTypePtr)
 			if err != nil {
@@ -127,6 +129,7 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
+			break
 		default:
 			return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 				WithFields(f.errFields).
@@ -162,6 +165,7 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(customType)
+		break
 	case types.IsImplementingUnmarshaler(f.metadata.Type):
 		withUnmarshaller, err := f.makeWithUnmarshaller(str)
 		if err != nil {
@@ -169,6 +173,7 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(withUnmarshaller)
+		break
 	case types.IsNative(f.metadata.Type):
 		native, err := f.makeNative(str, ptr)
 		if err != nil {
@@ -176,6 +181,7 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(native)
+		break
 	default:
 		return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 			WithFields(f.errFields)
@@ -265,7 +271,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		el = reflect.New(f.metadata.Type)
 	}
 
-	if el.Type().Implements(types.UnmarshalerText) {
+	if el.Type().Implements(types.TextUnmarshaller) {
 		t := el.Interface().(encoding.TextUnmarshaler)
 
 		err := t.UnmarshalText([]byte(str))
