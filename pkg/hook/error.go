@@ -101,7 +101,7 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 		response.Error = e.Kind
 
 		if e.Kind.ToStatusCode() == 500 {
-			// ensure there is an error internal if the status code is ErrorHookStatusCodeMinLogged (for instance when omission of the kind)
+			// ensure there is an error internal if the status code is 500 (for instance when omission of the kind)
 			response.Error = errors.KindInternal
 		}
 
