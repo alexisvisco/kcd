@@ -62,10 +62,16 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 			path, _ := e.GetField("path")
 
 			switch tag {
-			case "query", "path", "header", "ctx", "default":
+			case "query", "path", "header", "ctx", "default", "form":
 				response.Fields[path.(string)] = e.Message
 			case "json":
 				response.ErrorDescription = e.Message
+			}
+
+			if e.Kind.ToStatusCode() >= ErrorHookStatusCodeMinLogged {
+				if logger != nil {
+					logger(w, r, e)
+				}
 			}
 
 			break
