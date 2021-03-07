@@ -15,6 +15,8 @@ type Configuration struct {
 	ValidateHook hook.ValidateHook
 	RenderHook   hook.RenderHook
 	LogHook      hook.LogHook
+
+	Verbose bool
 }
 
 // Config is the instance of Configuration type.
@@ -29,6 +31,8 @@ var Config = Configuration{
 	BindHook:     hook.Bind(256 * 1024),
 	ValidateHook: hook.Validate,
 	LogHook:      hook.Log,
+
+	Verbose: false,
 }
 
 func (c Configuration) stringsTags() []string {

@@ -113,13 +113,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
-		case types.IsNative(f.metadata.Type):
-			native, err := f.makeNative(val, isTypePtr)
-			if err != nil {
-				return err.WithField("value-index", i)
-			}
-
-			addToElem(i, native)
 		case types.IsImplementingUnmarshaler(f.metadata.Type):
 			withUnmarshaller, err := f.makeWithUnmarshaller(val)
 			if err != nil {
@@ -127,6 +120,13 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, withUnmarshaller)
+		case types.IsNative(f.metadata.Type):
+			native, err := f.makeNative(val, isTypePtr)
+			if err != nil {
+				return err.WithField("value-index", i)
+			}
+
+			addToElem(i, native)
 		default:
 			return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 				WithFields(f.errFields).

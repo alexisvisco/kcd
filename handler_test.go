@@ -194,7 +194,9 @@ func TestBind(t *testing.T) {
 	})
 
 	t.Run("it should fail because of invalid body", func(t *testing.T) {
-		e.POST("/3").WithBytes([]byte("{ this is a malformed json")).Expect().
+		e.POST("/3").
+			WithHeader("Content-type", "application/json").
+			WithBytes([]byte("{ this is a malformed json")).Expect().
 			Status(http.StatusBadRequest).
 			JSON().Path("$.error_description").Equal("unable to read json request")
 	})
