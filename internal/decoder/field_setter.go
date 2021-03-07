@@ -162,13 +162,6 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(customType)
-	case types.IsNative(f.metadata.Type):
-		native, err := f.makeNative(str, ptr)
-		if err != nil {
-			return err
-		}
-
-		f.field.Set(native)
 	case types.IsImplementingUnmarshaler(f.metadata.Type):
 		withUnmarshaller, err := f.makeWithUnmarshaller(str)
 		if err != nil {
@@ -176,6 +169,13 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(withUnmarshaller)
+	case types.IsNative(f.metadata.Type):
+		native, err := f.makeNative(str, ptr)
+		if err != nil {
+			return err
+		}
+
+		f.field.Set(native)
 	default:
 		return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 			WithFields(f.errFields)
