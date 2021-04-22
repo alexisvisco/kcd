@@ -55,8 +55,8 @@ func Error(w http.ResponseWriter, r *http.Request, err error, logger LogHook) {
 			response.Error = errors.KindInvalidArgument
 			response.ErrorDescription = http.StatusText(http.StatusBadRequest)
 
-			// TODO(alexis) 23/08/2020: maybe handle ctx decoding strategy as a internal server error because it is handled by the
-			// 							input provided by the developer and it is not an user input.
+			// TODO(alexis) 23/08/2020: maybe handle ctx decoding strategy as a internal server error because it
+			//                          is handled by the input provided by the developer and it is not an user input.
 
 			decodingStrategy, _ := e.GetField("decoding-strategy")
 			path, _ := e.GetField("path")

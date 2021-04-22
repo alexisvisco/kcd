@@ -16,7 +16,6 @@ import (
 func Bind(maxBodyBytes int64) BindHook {
 	return func(w http.ResponseWriter, r *http.Request, in interface{}) error {
 		if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
-
 			if r.ContentLength == 0 {
 				return nil
 			}

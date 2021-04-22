@@ -113,7 +113,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
-			break
 		case types.IsImplementingUnmarshaler(f.metadata.Type):
 			withUnmarshaller, err := f.makeWithUnmarshaller(val)
 			if err != nil {
@@ -121,7 +120,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, withUnmarshaller)
-			break
 		case types.IsNative(f.metadata.Type):
 			native, err := f.makeNative(val, isTypePtr)
 			if err != nil {
@@ -129,7 +127,6 @@ func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 			}
 
 			addToElem(i, native)
-			break
 		default:
 			return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 				WithFields(f.errFields).
@@ -165,7 +162,6 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(customType)
-		break
 	case types.IsImplementingUnmarshaler(f.metadata.Type):
 		withUnmarshaller, err := f.makeWithUnmarshaller(str)
 		if err != nil {
@@ -173,7 +169,6 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(withUnmarshaller)
-		break
 	case types.IsNative(f.metadata.Type):
 		native, err := f.makeNative(str, ptr)
 		if err != nil {
@@ -181,7 +176,6 @@ func (f fieldSetter) setForNormalType(str string, ptr bool) error {
 		}
 
 		f.field.Set(native)
-		break
 	default:
 		return errors.NewWithKind(kcderr.InputCritical, "type is not native, unmarshaller or custom type").
 			WithFields(f.errFields)
@@ -276,7 +270,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 
 		err := t.UnmarshalText([]byte(str))
 		if err != nil {
-			return reflect.Value{}, errors.Wrap(err, "unable to unmarshal from binary format").
+			return reflect.Value{}, errors.Wrap(err, "unable to unmarshal from text format").
 				WithKind(kcderr.Input).
 				WithFields(f.errFields)
 		}
@@ -300,7 +294,7 @@ func (f fieldSetter) makeWithUnmarshaller(str string) (reflect.Value, *errors.Er
 		t := el.Interface().(encoding.BinaryUnmarshaler)
 		err := t.UnmarshalBinary([]byte(str))
 		if err != nil {
-			return reflect.Value{}, errors.Wrap(err, "unable to unmarshal from text format").
+			return reflect.Value{}, errors.Wrap(err, "unable to unmarshal from binary format").
 				WithKind(kcderr.Input).
 				WithFields(f.errFields)
 		}
