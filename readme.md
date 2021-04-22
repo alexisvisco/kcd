@@ -1,19 +1,23 @@
 <p align="center">
-	<img width="460" height="300" src="./.github/golang-ss.gif">
+	<img alt="kcd logo" width="460" height="300" src="./.github/kcd_logo.svg">
 </p>
 <p align="center">
 	<a href="https://github.com/expectedsh/kcd/actions">
-		<img width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
+		<img alt="kcd is passing lint and tests" width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
 	<a href="https://goreportcard.com/report/github.com/expectedsh/kcd">
-		<img width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
+		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
 	<a href='https://coveralls.io/github/expectedsh/kcd'>
-		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='Coverage Status' /></a>
+		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='coverage status > 75%' /></a>
     <a href='https://app.fossa.com/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd?ref=badge_shield'>
             <img src='https://app.fossa.com/api/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd.svg?type=shield' alt='FOSSA Status' /></a>
 
 </p>
 
 ------
+
+<p align="center">
+	<img alt="comparaison between a code with and without kcd" src="./.github/versus.svg">
+</p>
 
 ## :stars: KCD 
 
