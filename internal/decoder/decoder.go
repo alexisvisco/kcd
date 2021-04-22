@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/expectedsh/kcd/internal/cache"
-	"github.com/expectedsh/kcd/pkg/extractor"
+	"github.com/alexisvisco/kcd/internal/cache"
+	"github.com/alexisvisco/kcd/pkg/extractor"
 )
 
 // Decoder is the http decoder system for KCD.

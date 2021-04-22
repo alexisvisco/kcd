@@ -8,7 +8,7 @@ import (
 
 	"github.com/expectedsh/errors"
 
-	"github.com/expectedsh/kcd/internal/kcderr"
+	"github.com/alexisvisco/kcd/internal/kcderr"
 )
 
 // Bind returns a Bind hook, it will read only maxBodyBytes bytes from the body and unmarshall

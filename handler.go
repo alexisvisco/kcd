@@ -9,8 +9,8 @@ import (
 
 	"github.com/expectedsh/errors"
 
-	"github.com/expectedsh/kcd/internal/cache"
-	"github.com/expectedsh/kcd/internal/decoder"
+	"github.com/alexisvisco/kcd/internal/cache"
+	"github.com/alexisvisco/kcd/internal/decoder"
 )
 
 type inputType int

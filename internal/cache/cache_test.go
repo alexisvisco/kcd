@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/expectedsh/kcd/internal/types"
+	"github.com/alexisvisco/kcd/internal/types"
 )
 
 type structThatImplementTextUnmarshaller struct {

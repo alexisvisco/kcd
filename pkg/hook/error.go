@@ -8,7 +8,7 @@ import (
 	validation "github.com/expectedsh/ozzo-validation/v4"
 	"github.com/go-chi/chi/middleware"
 
-	"github.com/expectedsh/kcd/internal/kcderr"
+	"github.com/alexisvisco/kcd/internal/kcderr"
 )
 
 var ErrorHookStatusCodeMinLogged = 500

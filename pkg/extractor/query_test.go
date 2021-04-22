@@ -8,7 +8,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/go-chi/chi"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 func TestQueryExtractor(t *testing.T) {

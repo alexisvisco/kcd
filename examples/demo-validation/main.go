@@ -7,7 +7,7 @@ import (
 	"github.com/expectedsh/ozzo-validation/v4/is"
 	"github.com/go-chi/chi"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package kcd
 
 import (
-	"github.com/expectedsh/kcd/pkg/extractor"
-	"github.com/expectedsh/kcd/pkg/hook"
+	"github.com/alexisvisco/kcd/pkg/extractor"
+	"github.com/alexisvisco/kcd/pkg/hook"
 )
 
 // Configuration is the main configuration type of kcd.

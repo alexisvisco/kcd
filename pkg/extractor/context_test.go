@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 type chocolate struct {

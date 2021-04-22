@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 func main() {

@@ -10,9 +10,9 @@ import (
 
 	"github.com/expectedsh/errors"
 
-	"github.com/expectedsh/kcd/internal/cache"
-	"github.com/expectedsh/kcd/internal/kcderr"
-	"github.com/expectedsh/kcd/internal/types"
+	"github.com/alexisvisco/kcd/internal/cache"
+	"github.com/alexisvisco/kcd/internal/kcderr"
+	"github.com/alexisvisco/kcd/internal/types"
 )
 
 type setterContext struct {

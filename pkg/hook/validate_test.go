@@ -11,7 +11,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/go-chi/chi"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 type hookValidateStruct struct {

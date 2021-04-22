@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"reflect"
 
-	"github.com/expectedsh/kcd/internal/types"
+	"github.com/alexisvisco/kcd/internal/types"
 )
 
 // StructAnalyzer is the cache struct analyzer

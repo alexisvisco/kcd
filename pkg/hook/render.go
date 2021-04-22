@@ -6,7 +6,7 @@ import (
 
 	"github.com/expectedsh/errors"
 
-	"github.com/expectedsh/kcd/internal/kcderr"
+	"github.com/alexisvisco/kcd/internal/kcderr"
 )
 
 // Render is the default render hook.

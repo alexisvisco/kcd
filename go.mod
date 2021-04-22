@@ -1,4 +1,4 @@
-module github.com/expectedsh/kcd
+module github.com/alexisvisco/kcd
 
 go 1.14
 
