@@ -140,16 +140,25 @@ func (e *Error) Stacktrace() string {
 			if isFirst {
 				st += fmt.Sprintf("%s%q%s", colorTeal, x.Message, colorRed) + "\n│" + space
 				if x.location != nil {
-					st += fmt.Sprintf("at %s:%d %s.%s %s%s%s", x.location.file, x.location.line, x.location.pkg, x.location.function, colorPurple, "<- error happened here", colorRed)
+					st += fmt.Sprintf("at %s:%d %s.%s %s%s%s",
+						x.location.file,
+						x.location.line,
+						x.location.pkg,
+						x.location.function,
+						colorPurple, "<- error happened here", colorRed)
 				}
 				isFirst = false
 			} else {
 				if x.location != nil {
-					st += fmt.Sprintf("at %s:%d %s.%s => %s%q%s", x.location.file, x.location.line, x.location.pkg, x.location.function, colorTeal, x.Message, colorRed)
+					st += fmt.Sprintf("at %s:%d %s.%s => %s%q%s",
+						x.location.file,
+						x.location.line,
+						x.location.pkg,
+						x.location.function,
+						colorTeal, x.Message, colorRed)
 				} else {
 					st += fmt.Sprintf("%s%q%s", colorTeal, x.Message, colorRed)
 				}
-
 			}
 
 			if x.Err != nil {
@@ -164,12 +173,11 @@ func (e *Error) Stacktrace() string {
 	}
 
 	if len(e.fields) > 0 {
-		st += fmt.Sprintf("\n│\n│ FIELDS ATTACHED:\n")
+		st += "\n│\n│ FIELDS ATTACHED:\n"
 		buffer := bytes.NewBuffer([]byte{})
 		w := tabwriter.NewWriter(buffer, 0, 0, 3, ' ', tabwriter.TabIndent)
 		for k, v := range e.fields {
 			fmt.Fprintf(w, "│ %s%q\t%s%v%s\n", colorTeal, k, colorMagenta, v, colorRed)
-
 		}
 		w.Flush()
 		st += buffer.String()
