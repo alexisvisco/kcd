@@ -27,6 +27,8 @@ jobs:
       with:
         version: v1.29
 
+    - run: rm -rf examples
+
     - name: tests
       run: go test -v .
 
