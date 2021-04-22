@@ -6,8 +6,8 @@
 		<img alt="kcd is passing lint and tests" width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
 	<a href="https://goreportcard.com/report/github.com/expectedsh/kcd">
 		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
-	<a href='https://coveralls.io/github/expectedsh/kcd'>
-		<img src='https://coveralls.io/repos/github/expectedsh/kcd/badge.svg' alt='coverage status > 75%' /></a>
+	<a href='https://coveralls.io/github/alexisvisco/kcd?branch=master'>
+        <img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' /></a>
     <a href='https://app.fossa.com/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd?ref=badge_shield'>
             <img src='https://app.fossa.com/api/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd.svg?type=shield' alt='FOSSA Status' /></a>
 
