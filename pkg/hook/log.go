@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 	"github.com/go-chi/chi/middleware"
 	"github.com/sirupsen/logrus"
 )
@@ -16,7 +16,7 @@ func Log(_ http.ResponseWriter, r *http.Request, err error) {
 	e, ok := err.(*errors.Error)
 	if ok {
 		if logrus.GetLevel() <= logrus.DebugLevel {
-			fmt.Println("\n" + e.FormatStacktrace())
+			fmt.Println("\n" + e.Stacktrace())
 		}
 		logger = e.Log()
 	} else {

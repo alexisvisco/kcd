@@ -1,7 +1,7 @@
 package kcderr
 
 import (
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 )
 
 var (

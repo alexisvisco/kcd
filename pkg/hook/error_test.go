@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 	"github.com/gavv/httpexpect"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"

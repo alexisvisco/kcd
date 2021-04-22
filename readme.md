@@ -19,13 +19,13 @@
 	<img alt="comparaison between a code with and without kcd" src="./.github/versus.svg">
 </p>
 
-## :stars: KCD 
+## :stars: KCD
 
-KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. 
-It manages all you want for building REST services.
+KCD is a grandiose REST helper that wrap your shiny handler into a classic http handler. It manages all you want for
+building REST services.
 
-This library is **opinionated** by default but **customizable** which mean it uses some other libraries like Chi, Logrus...
-KCD is modular so each pieces of the code that rely on a specific library can be changed. 
+This library is **opinionated** by default but **customizable** which mean it uses some other libraries like Chi,
+Logrus... KCD is modular so each pieces of the code that rely on a specific library can be changed.
 
 ## :muscle: Example
 

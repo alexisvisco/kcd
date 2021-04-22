@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 
 	"github.com/alexisvisco/kcd/internal/kcderr"
 )

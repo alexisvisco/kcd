@@ -8,11 +8,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/expectedsh/errors"
-
 	"github.com/alexisvisco/kcd/internal/cache"
 	"github.com/alexisvisco/kcd/internal/kcderr"
 	"github.com/alexisvisco/kcd/internal/types"
+	"github.com/alexisvisco/kcd/pkg/errors"
 )
 
 type setterContext struct {

@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 
 	"github.com/alexisvisco/kcd/internal/cache"
 	"github.com/alexisvisco/kcd/internal/decoder"

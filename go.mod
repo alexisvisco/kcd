@@ -4,7 +4,6 @@ go 1.14
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/expectedsh/errors v0.0.0-20210202114355-1ef1be695088
 	github.com/expectedsh/ozzo-validation/v4 v4.2.4
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/fatih/structs v1.1.0 // indirect

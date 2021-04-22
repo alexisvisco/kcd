@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/expectedsh/errors"
+	"github.com/alexisvisco/kcd/pkg/errors"
 	validation "github.com/expectedsh/ozzo-validation/v4"
 	"github.com/go-chi/chi"
 
