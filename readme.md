@@ -53,7 +53,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 
-	"github.com/expectedsh/kcd"
+	"github.com/alexisvisco/kcd"
 )
 
 func main() {
@@ -75,7 +75,7 @@ type CreateCustomerInput struct {
 	Subject  string   `json:"body"`                 // it also works with json body
 }
 
-// CustomerOutput is the output type of the http request.
+// CreateCustomerOutput is the output type of the http request.
 type CreateCustomerOutput struct {
 	Name string `json:"name"`
 }
