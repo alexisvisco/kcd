@@ -141,11 +141,12 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 }
 
 func (s StructAnalyzer) lookupTags(structField reflect.StructField, currentPaths TagsPath) (containTags bool) {
-	hasTags := false
+	var (
+		hasTags    = false
+		alreadySet = map[string]bool{}
+	)
 
-	alreadySet := map[string]bool{}
 	for _, tag := range s.tags {
-
 		if _, mustSkipBecauseAlreadyDefined := alreadySet[tag]; mustSkipBecauseAlreadyDefined {
 			continue
 		}
