@@ -134,7 +134,7 @@ func (s *SliceWithUnmarshal) UnmarshalText(text []byte) error {
 }
 
 func std(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ok"))
+	_, _ = w.Write([]byte("ok"))
 }
 
 func TestBind(t *testing.T) {

@@ -72,13 +72,12 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	funcName := runtime.FuncForPC(hv.Pointer()).Name()
 
 	orderInput, in := input(ht, funcName)
-	isStdHttpHandlerInput := isStandardHttpHandlerInput(orderInput)
 
-	outType := output(ht, funcName, isStdHttpHandlerInput)
-
-	// check outType == nil because the std http handler don't return anything but kcd can have a func(res, req) error
+	// check number of outputs because the std http handler don't return anything but kcd can have a func(res, req) error
 	// so by adding this condition we ensure this is a std http handler.
-	isStdHttpHandler := isStdHttpHandlerInput && outType == nil
+	isStdHTTPHandler := isStandardHTTPHandlerInput(orderInput) && ht.NumOut() == 0
+
+	outType := output(ht, funcName, isStdHTTPHandler)
 
 	cacheStruct := cache.NewStructAnalyzer(Config.stringsTags(), Config.valuesTags(), in).Cache()
 
@@ -131,7 +130,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 
 		ret := hv.Call(args)
 
-		if !isStdHttpHandler {
+		if !isStdHTTPHandler {
 			if outType != nil {
 				outputStruct = ret[0].Interface()
 				err = ret[1].Interface()
@@ -141,7 +140,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 		}
 
 		// the handler must stop because its a special error or std http handler
-		if err == ErrStopHandler || isStdHttpHandler {
+		if err == ErrStopHandler || isStdHTTPHandler {
 			return
 		}
 
@@ -269,7 +268,7 @@ func output(ht reflect.Type, name string, handler bool) reflect.Type {
 	return nil
 }
 
-func isStandardHttpHandlerInput(orderedInputType []inputType) bool {
+func isStandardHTTPHandlerInput(orderedInputType []inputType) bool {
 	if len(orderedInputType) != 2 {
 		return false
 	}
