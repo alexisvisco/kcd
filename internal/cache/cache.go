@@ -142,10 +142,18 @@ func (s StructAnalyzer) cache(cache *StructCache, paths TagsPath, t reflect.Type
 
 func (s StructAnalyzer) lookupTags(structField reflect.StructField, currentPaths TagsPath) (containTags bool) {
 	hasTags := false
+
+	alreadySet := map[string]bool{}
 	for _, tag := range s.tags {
+
+		if _, mustSkipBecauseAlreadyDefined := alreadySet[tag]; mustSkipBecauseAlreadyDefined {
+			continue
+		}
+
 		lookup, ok := structField.Tag.Lookup(tag)
 		if ok {
 			hasTags = true
+			alreadySet[tag] = true
 			currentPaths.Add(tag, lookup)
 		}
 	}
