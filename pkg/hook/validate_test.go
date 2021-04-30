@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	validation "github.com/expectedsh/ozzo-validation/v4"
-	"github.com/expectedsh/ozzo-validation/v4/is"
+	validation "github.com/alexisvisco/ozzo-validation/v4"
+	"github.com/alexisvisco/ozzo-validation/v4/is"
 	"github.com/gavv/httpexpect"
 	"github.com/go-chi/chi"
 

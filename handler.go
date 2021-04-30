@@ -22,18 +22,27 @@ const (
 	inputTypeCtx
 )
 
+// ErrStopHandler will stop execution of the handler, a blank response will be sent
 var ErrStopHandler = errors.New("KCD_STOP_HANDLER")
 
 // Handler returns a default http handler.
 //
 // The handler may use the following signature:
 //
-//  func([response http.ResponseWriter], [request *http.Request], [INPUT object ptr]) ([OUTPUT object], error)
+//  func(
+// 			[ctx context.Context],
+//			[response http.ResponseWriter],
+//			[request *http.Request],
+//			[INPUT object ptr]) ([OUTPUT object], error)
 //
 // INPUT and OUTPUT struct are both optional.
 // As such, the minimal accepted signature is:
 //
 //  func() error
+//
+//
+// There is an exception because you can also use default http handler but the status code, and the render hook
+// will not be used.
 //
 // A complete example for an INPUT struct:
 //  type CreateCustomerInput struct {
@@ -63,7 +72,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 	funcName := runtime.FuncForPC(hv.Pointer()).Name()
 
 	orderInput, in := input(ht, funcName)
-	out := output(ht, funcName)
+	isStdHttpHandlerInput := isStandardHttpHandlerInput(orderInput)
+
+	outType := output(ht, funcName, isStdHttpHandlerInput)
+
+	// check outType == nil because the std http handler don't return anything but kcd can have a func(res, req) error
+	// so by adding this condition we ensure this is a std http handler.
+	isStdHttpHandler := isStdHttpHandlerInput && outType == nil
 
 	cacheStruct := cache.NewStructAnalyzer(Config.stringsTags(), Config.valuesTags(), in).Cache()
 
@@ -115,15 +130,18 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 		}
 
 		ret := hv.Call(args)
-		if out != nil {
-			outputStruct = ret[0].Interface()
-			err = ret[1].Interface()
-		} else {
-			err = ret[0].Interface()
+
+		if !isStdHttpHandler {
+			if outType != nil {
+				outputStruct = ret[0].Interface()
+				err = ret[1].Interface()
+			} else {
+				err = ret[0].Interface()
+			}
 		}
 
-		// the handler must stop because its a special error
-		if err == ErrStopHandler {
+		// the handler must stop because its a special error or std http handler
+		if err == ErrStopHandler || isStdHttpHandler {
 			return
 		}
 
@@ -220,8 +238,12 @@ func input(ht reflect.Type, name string) (orderedInputType []inputType, reflectT
 
 // output checks the output parameters of a kcd handler
 // and return the type of the return type, if any.
-func output(ht reflect.Type, name string) reflect.Type {
+func output(ht reflect.Type, name string, handler bool) reflect.Type {
 	n := ht.NumOut()
+
+	if n == 0 && handler {
+		return nil
+	}
 
 	if n < 1 || n > 2 {
 		panic(fmt.Sprintf(
@@ -245,4 +267,24 @@ func output(ht reflect.Type, name string) reflect.Type {
 		return t
 	}
 	return nil
+}
+
+func isStandardHttpHandlerInput(orderedInputType []inputType) bool {
+	if len(orderedInputType) != 2 {
+		return false
+	}
+
+	isReq, isRes := false, false
+
+	for _, t := range orderedInputType {
+		if t == inputTypeRequest {
+			isReq = true
+		}
+
+		if t == inputTypeResponse {
+			isRes = true
+		}
+	}
+
+	return isRes && isReq
 }

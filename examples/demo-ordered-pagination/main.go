@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/alexisvisco/kcd/pkg/errors"
-	validation "github.com/expectedsh/ozzo-validation/v4"
+	validation "github.com/alexisvisco/ozzo-validation/v4"
 	"github.com/go-chi/chi"
 
 	"github.com/alexisvisco/kcd"

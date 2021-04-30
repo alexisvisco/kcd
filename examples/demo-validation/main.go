@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	validation "github.com/expectedsh/ozzo-validation/v4"
-	"github.com/expectedsh/ozzo-validation/v4/is"
+	validation "github.com/alexisvisco/ozzo-validation/v4"
+	"github.com/alexisvisco/ozzo-validation/v4/is"
 	"github.com/go-chi/chi"
 
 	"github.com/alexisvisco/kcd"

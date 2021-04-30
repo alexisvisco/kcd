@@ -2,15 +2,12 @@
 	<img alt="kcd logo" width="460" height="300" src="./.github/kcd_logo.svg">
 </p>
 <p align="center">
-	<a href="https://github.com/expectedsh/kcd/actions">
-		<img alt="kcd is passing lint and tests" width="93" height="20" src="https://github.com/expectedsh/kcd/workflows/Go/badge.svg"></a>
-	<a href="https://goreportcard.com/report/github.com/expectedsh/kcd">
-		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/expectedsh/kcd"></a>
+	<a href="https://github.com/alexisvisco/kcd/actions">
+		<img alt="kcd is passing lint and tests" width="93" height="20" src="https://github.com/alexisvisco/kcd/workflows/Go/badge.svg"></a>
+	<a href="https://goreportcard.com/report/github.com/alexisvisco/kcd">
+		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/alexisvisco/kcd"></a>
 	<a href='https://coveralls.io/github/alexisvisco/kcd?branch=master'>
         <img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' /></a>
-    <a href='https://app.fossa.com/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd?ref=badge_shield'>
-            <img src='https://app.fossa.com/api/projects/git%2Bgithub.com%2Fexpectedsh%2Fkcd.svg?type=shield' alt='FOSSA Status' /></a>
-
 </p>
 
 ------
@@ -30,6 +27,7 @@ Logrus... KCD is modular so each pieces of the code that rely on a specific libr
 ## :muscle: Example
 
 - [*Demo simple*](examples/demo/main.go)
+- [*Demo standard http handler*](examples/demo-standard-http/main.go)
 - [*Bind query parameters*](examples/input-from-query-parameter/main.go)
 - [*Bind path parameters*](examples/input-from-path-parameter/main.go)
 - [*Bind json body*](examples/input-from-json-body/main.go)

@@ -133,14 +133,25 @@ func (s *SliceWithUnmarshal) UnmarshalText(text []byte) error {
 	return nil
 }
 
+func std(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("ok"))
+}
+
 func TestBind(t *testing.T) {
 	r := chi.NewRouter()
+
+	r.Get("/hello", kcd.Handler(std, 200))
 	r.Post("/{uint}", kcd.Handler(hookBindHandler, 200))
 
 	server := httptest.NewServer(r)
 	defer server.Close()
 
 	e := httpexpect.New(t, server.URL)
+
+	t.Run("it should execute std http handler", func(t *testing.T) {
+		body := e.GET("/hello").Expect().Body().Raw()
+		assert.Equal(t, "ok", body)
+	})
 
 	t.Run("it should succeed", func(t *testing.T) {
 		expect := e.POST("/4").
