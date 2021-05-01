@@ -7,7 +7,9 @@
 	<a href="https://goreportcard.com/report/github.com/alexisvisco/kcd">
 		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/alexisvisco/kcd"></a>
 	<a href='https://coveralls.io/github/alexisvisco/kcd?branch=master'>
-        <img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' /></a>
+        <img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' />
+    </a><a href='https://alexisvisco.gitbook.io/kcd'>
+        <img src='https://img.shields.io/badge/gitbook-documentation-blue' alt='documentation' /></a>
 </p>
 
 ------
