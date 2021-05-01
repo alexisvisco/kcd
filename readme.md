@@ -90,6 +90,12 @@ func YourHttpHandler(in *CreateCustomerInput) (CreateCustomerOutput, error) {
 }
 ```
 
+## Compatibility with framework
+- chi (by default)
+- [gorilla/mux](https://github.com/alexisvisco/kcd-mux)
+- [gin](https://github.com/alexisvisco/kcd-gin)
+- [echo](https://github.com/alexisvisco/kcd-echo)
+
 ## :coffee: Benefits
 
 - More readable code
