@@ -90,6 +90,12 @@ func YourHttpHandler(in *CreateCustomerInput) (CreateCustomerOutput, error) {
 }
 ```
 
+## Install 
+
+```shell
+go get github.com/alexisvisco/kcd@v0.1.0
+```
+
 ## Compatibility with framework
 - chi (by default)
 - [gorilla/mux](https://github.com/alexisvisco/kcd-mux)
