@@ -1,20 +1,15 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-
 	"github.com/alexisvisco/kcd"
+	"net/http"
 )
 
 func main() {
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
 
-	r.Get("/{name}", kcd.Handler(StandardHttpHandler, http.StatusOK))
-	_ = http.ListenAndServe(":3000", r)
+	//                                                                    v   status code will be ignored
+	http.HandleFunc("/example/", kcd.Handler(StandardHttpHandler, http.StatusOK))
+	http.ListenAndServe(":8080", nil)
 }
 
 // StandardHttpHandler is a standard http handler and work with kcd.
@@ -25,6 +20,8 @@ func main() {
 // - if you have a large codebase and you want to progressively
 //   integrate kcd
 // - if you have a complex code for instance websocket, sse ...
+//
+//                                                              v as you can see there is no error, and no output struct
 func StandardHttpHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok"))
 }
