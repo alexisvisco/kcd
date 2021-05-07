@@ -1,5 +1,6 @@
 <p align="center">
-	<img alt="kcd logo" width="460" height="300" src="./.github/kcd_logo.svg">
+	<a href='https://alexisvisco.gitbook.io/kcd' alt='documentation'>
+		<img alt="kcd logo" width="460" height="300" src="./.github/kcd_logo.svg"></a>
 </p>
 <p align="center">
 	<a href="https://github.com/alexisvisco/kcd/actions">
@@ -7,9 +8,9 @@
 	<a href="https://goreportcard.com/report/github.com/alexisvisco/kcd">
 		<img alt="kcd has a a+ report" width="78" height="20" src="https://goreportcard.com/badge/github.com/alexisvisco/kcd"></a>
 	<a href='https://coveralls.io/github/alexisvisco/kcd?branch=master'>
-        <img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' />
-    </a><a href='https://alexisvisco.gitbook.io/kcd'>
-        <img src='https://img.shields.io/badge/gitbook-documentation-blue' alt='documentation' /></a>
+        	<img src='https://coveralls.io/repos/github/alexisvisco/kcd/badge.svg?branch=master' alt='Coverage Status' /></a>
+	<a href='https://alexisvisco.gitbook.io/kcd'>
+        	<img src='https://img.shields.io/badge/gitbook-documentation-blue' alt='documentation' /></a>
 </p>
 
 ------
@@ -109,5 +110,4 @@ go get github.com/alexisvisco/kcd@v0.1.0
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
 
-
-
+[Readm more...](https://alexisvisco.gitbook.io/kcd)
