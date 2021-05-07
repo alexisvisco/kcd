@@ -110,4 +110,4 @@ go get github.com/alexisvisco/kcd@v0.1.0
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
 
-[Readm more...](https://alexisvisco.gitbook.io/kcd)
+[Read more...](https://alexisvisco.gitbook.io/kcd)
