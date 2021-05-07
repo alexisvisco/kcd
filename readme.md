@@ -1,5 +1,5 @@
 <p align="center">
-	<a href='https://alexisvisco.gitbook.io/kcd' alt='documentation'>
+	<a href='https://alexisvisco.gitbook.io/kcd'>
 		<img alt="kcd logo" width="460" height="300" src="./.github/kcd_logo.svg"></a>
 </p>
 <p align="center">
@@ -110,4 +110,4 @@ go get github.com/alexisvisco/kcd@v0.1.0
 - No more code duplication with unmarshalling, verifying, validating, marshalling ...
 - You could have one interface for the client and server implementation
 
-[Read more...](https://alexisvisco.gitbook.io/kcd)
+[ 📖 Read more...](https://alexisvisco.gitbook.io/kcd)
