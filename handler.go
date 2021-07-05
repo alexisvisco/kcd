@@ -111,7 +111,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 			}
 		}
 
-		var err, outputStruct interface{}
+		
+		var (
+			outputStruct interface{}
+			err interface{}
+		)
+
+		err = nil
 
 		// funcIn contains the input parameters of the kcd handler call.
 		var args []reflect.Value
@@ -131,10 +137,13 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 		ret := hv.Call(args)
 
 		if !isStdHTTPHandler {
+			errIndex := 0
 			if outType != nil {
 				outputStruct = ret[0].Interface()
-				err = ret[1].Interface()
-			} else {
+				errIndex = 1
+			}
+
+			if !ret[errIndex].IsNil() {
 				err = ret[0].Interface()
 			}
 		}

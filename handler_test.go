@@ -137,10 +137,25 @@ func std(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("ok"))
 }
 
+
+type ErrImpl struct {}
+
+func (t *ErrImpl) Error() string {
+	return "aaaa"
+}
+
+
+func testCustomErrNil() *ErrImpl {
+	return nil
+}
+
+
+
 func TestBind(t *testing.T) {
 	r := chi.NewRouter()
 
 	r.Get("/hello", kcd.Handler(std, 200))
+	r.Get("/testerrimpl", kcd.Handler(testCustomErrNil, 200))
 	r.Post("/{uint}", kcd.Handler(hookBindHandler, 200))
 
 	server := httptest.NewServer(r)
@@ -152,6 +167,12 @@ func TestBind(t *testing.T) {
 		body := e.GET("/hello").Expect().Body().Raw()
 		assert.Equal(t, "ok", body)
 	})
+
+	t.Run("it should return nil with custom error", func(t *testing.T) {
+		body := e.GET("/testerrimpl").Expect().Body().Raw()
+		assert.Equal(t, "", body)
+	})
+
 
 	t.Run("it should succeed", func(t *testing.T) {
 		expect := e.POST("/4").
