@@ -111,10 +111,9 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 			}
 		}
 
-		
 		var (
 			outputStruct interface{}
-			err interface{}
+			err          interface{}
 		)
 
 		err = nil
