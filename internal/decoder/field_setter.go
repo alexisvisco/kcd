@@ -74,7 +74,7 @@ func (f fieldSetter) set() error {
 func (f fieldSetter) setForArrayOrSlice(ptr bool, list []string) error {
 	var (
 		element reflect.Value
-		array   = false
+		array   bool
 	)
 
 	isTypePtr := false

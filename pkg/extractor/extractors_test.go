@@ -69,7 +69,7 @@ type ExtractorTestStruct struct {
 
 	EmbeddedExtractorTest
 	*EmbeddedPtrExtractorTest
-	//embeddedQueryExtractor will don't work since it's not accessible
+	// embeddedQueryExtractor will don't work since it's not accessible
 
 	SubStruct SubStructExtractorTest
 
