@@ -1,6 +1,7 @@
 package kcd_test
 
 import (
+	"github.com/alexisvisco/kcd/pkg/errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -147,11 +148,30 @@ func testCustomErrNil() *ErrImpl {
 	return nil
 }
 
+type NormalInput struct {
+	Username string `query:"username"`
+}
+
+type NormalOutput struct {
+	Username string `query:"username"`
+}
+
+func normalHandler(in *NormalInput) (*NormalOutput, error) {
+	if in.Username == "error" {
+		return nil, errors.NewWithKind(errors.KindInternal, "error")
+	}
+
+	return &NormalOutput{
+		Username: in.Username,
+	}, nil
+}
+
 func TestBind(t *testing.T) {
 	r := chi.NewRouter()
 
 	r.Get("/hello", kcd.Handler(std, 200))
 	r.Get("/testerrimpl", kcd.Handler(testCustomErrNil, 200))
+	r.Get("/normalhandler", kcd.Handler(normalHandler, 200))
 	r.Post("/{uint}", kcd.Handler(hookBindHandler, 200))
 
 	server := httptest.NewServer(r)
@@ -160,8 +180,20 @@ func TestBind(t *testing.T) {
 	e := httpexpect.New(t, server.URL)
 
 	t.Run("it should execute std http handler", func(t *testing.T) {
-		body := e.GET("/hello").Expect().Body().Raw()
+		body := e.GET("/hello").Expect().Status(200).Body().Raw()
 		assert.Equal(t, "ok", body)
+	})
+
+	t.Run("it should normal handler without error", func(t *testing.T) {
+		e.GET(`/normalhandler`).WithQuery("username", "k2000").Expect().
+			Status(http.StatusOK).
+			JSON().Object().
+			Value("Username").Equal("k2000")
+	})
+
+	t.Run("it should normal handler with error", func(t *testing.T) {
+		e.GET(`/normalhandler`).WithQuery("username", "error").Expect().
+			Status(http.StatusInternalServerError)
 	})
 
 	t.Run("it should return nil with custom error", func(t *testing.T) {

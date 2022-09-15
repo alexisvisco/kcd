@@ -143,7 +143,7 @@ func Handler(h interface{}, defaultStatusCode int) http.HandlerFunc {
 			}
 
 			if !ret[errIndex].IsNil() {
-				err = ret[0].Interface()
+				err = ret[errIndex].Interface()
 			}
 		}
 

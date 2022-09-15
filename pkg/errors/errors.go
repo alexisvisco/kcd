@@ -127,7 +127,7 @@ func (e *Error) Error() string {
 
 // Stacktrace format a pretty printed stacktrace of the errors
 func (e *Error) Stacktrace() string {
-	st := colorRed + "┌─────────────────────────────────────────────\n│ DEBUG ERROR: "
+	st := colorRed + "┌─────────────────────────────────────────────\n" + colorRed + "│ DEBUG ERROR: "
 
 	const space = "  "
 
@@ -138,7 +138,8 @@ func (e *Error) Stacktrace() string {
 
 		if ok {
 			if isFirst {
-				st += fmt.Sprintf("%s%q%s", colorTeal, x.Message, colorRed) + "\n│" + space
+				st += fmt.Sprintf("%s%q%s", colorTeal, x.Message, colorRed) + "\n" + colorRed + "│" +
+					colorReset + space
 				if x.location != nil {
 					st += fmt.Sprintf("at %s:%d %s.%s %s%s%s",
 						x.location.file,
@@ -162,7 +163,7 @@ func (e *Error) Stacktrace() string {
 			}
 
 			if x.Err != nil {
-				st += "\n│" + space
+				st += "\n" + colorRed + "│" + colorReset + space
 			}
 
 			tmp = x.Err
@@ -177,7 +178,7 @@ func (e *Error) Stacktrace() string {
 		buffer := bytes.NewBuffer([]byte{})
 		w := tabwriter.NewWriter(buffer, 0, 0, 3, ' ', tabwriter.TabIndent)
 		for k, v := range e.fields {
-			fmt.Fprintf(w, "│ %s%q\t%s%v%s\n", colorTeal, k, colorMagenta, v, colorRed)
+			fmt.Fprintf(w, "%s│ %s%q\t%s%v%s\n", colorRed, colorTeal, k, colorMagenta, v, colorRed)
 		}
 		w.Flush()
 		st += buffer.String()
