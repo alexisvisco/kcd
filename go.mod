@@ -1,6 +1,6 @@
 module github.com/alexisvisco/kcd
 
-go 1.14
+go 1.18
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
