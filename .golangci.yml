@@ -15,7 +15,6 @@ linters:
     - dupl # Tool for code clone detection
     - goconst # Finds repeated strings that could be replaced by a constant
     - gocyclo # Computes and checks the cyclomatic complexity of functions
-    - goimports
     - misspell # Finds commonly misspelled English words in comments
     - lll # Reports long lines
     - unparam # Reports unused function parameters
