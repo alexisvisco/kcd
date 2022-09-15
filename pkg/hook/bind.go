@@ -2,7 +2,7 @@ package hook
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -21,7 +21,7 @@ func Bind(maxBodyBytes int64) BindHook {
 			}
 			r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
-			bytesBody, err := ioutil.ReadAll(r.Body)
+			bytesBody, err := io.ReadAll(r.Body)
 			if err != nil {
 				return errors.Wrap(err, "unable to read body").WithKind(kcderr.InputCritical)
 			}

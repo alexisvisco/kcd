@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/alexisvisco/kcd"
 	"net/http"
+
+	"github.com/alexisvisco/kcd"
 )
 
 func main() {

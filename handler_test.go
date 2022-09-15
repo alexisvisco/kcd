@@ -1,12 +1,13 @@
 package kcd_test
 
 import (
-	"github.com/alexisvisco/kcd/pkg/errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/alexisvisco/kcd/pkg/errors"
 
 	"github.com/gavv/httpexpect"
 	"github.com/go-chi/chi"

@@ -3,7 +3,7 @@ package hook
 import (
 	"context"
 
-	"github.com/alexisvisco/ozzo-validation/v4"
+	validation "github.com/alexisvisco/ozzo-validation/v4"
 )
 
 // Validate is the default validation hook.
